@@ -25,6 +25,15 @@
         /// <summary>
         /// The local path for current source, should be resolved to be relative path at some late stage
         /// </summary>
+        [YamlMember(Alias = "headerPath")]
+        public string HeaderPath { get; set; }
+
+        [YamlMember(Alias = "headerStartLine")]
+        public int HeaderStartLine { get; set; }
+
+        [YamlMember(Alias = "HeaderEndLine")]
+        public int HeaderEndLine { get; set; }
+
         [YamlMember(Alias = "path")]
         public string Path { get; set; }
 
@@ -33,15 +42,6 @@
 
         [YamlMember(Alias = "endLine")]
         public int EndLine { get; set; }
-
-        [YamlMember(Alias = "bodypath")]
-        public string BodyPath { get; set; }
-
-        [YamlMember(Alias = "bodyStartLine")]
-        public int BodyStartLine { get; set; }
-
-        [YamlMember(Alias = "bodyEndLine")]
-        public int BodyEndLine { get; set; }
 
         [YamlMember(Alias = "content")]
         public string Content { get; set; }

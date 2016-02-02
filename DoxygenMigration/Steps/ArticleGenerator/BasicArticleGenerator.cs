@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using System.Web;
     using System.Xml.Linq;
     using System.Xml.XPath;
 
@@ -51,8 +50,8 @@
                         var memberYaml = new CppYaml();
                         memberYaml.Uid = member.NullableAttribute("id").NullableValue();
                         memberYaml.Id = YamlUtility.ParseIdFromUid(memberYaml.Uid);
-                        memberYaml.Name = member.NullableElement("name").NullableValue();
-                        memberYaml.FullName = HttpUtility.HtmlDecode(member.NullableElement("definition").NullableValue());
+                        memberYaml.Name = YamlUtility.ParseMemberName(member.NullableElement("name").NullableValue(), member.NullableElement("argsstring").NullableValue());
+                        memberYaml.FullName = member.NullableElement("definition").NullableValue();
                         memberYaml.Href = mainYaml.Href;
                         memberYaml.Type = tuple.Item1.Value;
                         memberYaml.Parent = mainYaml.Uid;
@@ -131,7 +130,9 @@
             {
                 sb.Append(string.Format("{0} ", kind));
             }
-            sb.Append(mainYaml.Name);
+            int index = mainYaml.Name.LastIndexOf(Constants.CppSpliter);
+            string name = mainYaml.Name.Substring(index < 0 ? 0 : index + Constants.CppSpliter.Length);
+            sb.Append(name);
 
             if (sb.ToString() != string.Empty)
             {
@@ -157,7 +158,7 @@
             {
                 sb.Append("static ");
             }
-            string typeStr = HttpUtility.HtmlDecode(member.NullableElement("type").NullableValue());
+            string typeStr = member.NullableElement("type").NullableValue();
             if (typeStr != null)
             {
                 sb.Append(typeStr + " ");
@@ -194,7 +195,7 @@
                     new ApiParameter
                     {
                         Name = p.NullableElement("declname").NullableValue(),
-                        Type = !p.NullableElement("type").NullableElement("ref").IsNull() ? p.NullableElement("type").NullableElement("ref").NullableAttribute("refid").NullableValue() : HttpUtility.HtmlDecode(p.NullableElement("type").NullableValue()),
+                        Type = ParseType(p.NullableElement("type")),
                         Description = ParseParamDescription(member.NullableElement("detaileddescription"), p.NullableElement("declname").NullableValue())
                     }).ToList();
             }
@@ -202,11 +203,12 @@
 
         private void FillReturn(SyntaxDetailViewModel syntax, XElement member)
         {
-            if (member.NullableElement("type").NullableValue() != null)
+            string typeStr = member.NullableElement("type").NullableValue();
+            if (typeStr != null && (!typeStr.Equals("void", StringComparison.OrdinalIgnoreCase)))
             {
                 syntax.Return = new ApiParameter
                 {
-                    Type = !member.NullableElement("type").NullableElement("ref").IsNull() ? member.NullableElement("type").NullableElement("ref").NullableAttribute("refid").NullableValue() : HttpUtility.HtmlDecode(member.NullableElement("type").NullableValue()),
+                    Type = ParseType(member.NullableElement("type")),
                     Description = ParseReturnDescription(member.NullableElement("detaileddescription"))
                 };
             }
@@ -232,6 +234,19 @@
             return returnValue.NullableValue();
         }
 
+        private string ParseType(XElement type)
+        {
+            if (type.IsNull())
+            {
+                return null;
+            }
+
+            //return string.Concat(from node in type.CreateNavigator().Select("node()").Cast<XPathNavigator>()
+            //                     select node.Name == "ref" ? node.GetAttribute("refid", string.Empty) : node.Value);
+
+            return type.NullableElement("ref").IsNull() ? type.NullableValue() : type.NullableElement("ref").NullableAttribute("refid").NullableValue();
+        }
+
         private void FillSees(CppYaml yaml, XElement detailedDescription)
         {
             var sees = detailedDescription.XPathSelectElements("para/simplesect[@kind='see']/para/ref");
@@ -252,17 +267,17 @@
         {
             if (!location.IsNull())
             {
-                string path = location.NullableAttribute("file").NullableValue();
-                string startline = location.NullableAttribute("line").NullableValue();
-                string bodyPath = location.NullableAttribute("bodyfile").NullableValue();
-                string bodyStartline = location.NullableAttribute("bodystart").NullableValue();
+                string headerPath = location.NullableAttribute("file").NullableValue();
+                string headerStartline = location.NullableAttribute("line").NullableValue();
+                string path = location.NullableAttribute("bodyfile").NullableValue();
+                string startline = location.NullableAttribute("bodystart").NullableValue();
                 yaml.Source = new SourceDetail
                 {
-                    Remote = new GitDetail { RemoteRepositoryUrl = repo, RemoteBranch = branch, RelativePath = path, BodyRelativePath = bodyPath },
-                    Path = path,
-                    StartLine = startline != null ? int.Parse(startline) - 1 : 0,
-                    BodyPath = bodyPath,
-                    BodyStartLine = bodyStartline != null ? int.Parse(bodyStartline) - 1 : 0,
+                    Remote = new GitDetail { RemoteRepositoryUrl = repo, RemoteBranch = branch, HeaderRelativePath = headerPath, RelativePath = path ?? headerPath },
+                    HeaderPath = headerPath,
+                    HeaderStartLine = headerStartline != null ? int.Parse(headerStartline) - 1 : 0,
+                    Path = path ?? headerPath,
+                    StartLine = path != null ? (startline != null ? int.Parse(startline) - 1 : 0) : (headerStartline != null ? int.Parse(headerStartline) - 1 : 0),
                 };
             }
         }

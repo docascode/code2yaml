@@ -42,6 +42,16 @@
             }
         }
 
+        public static string ParseMemberName(string name, string argstring)
+        {
+            if (argstring == null)
+            {
+                return name;
+            }
+            int index = argstring.LastIndexOf(")");
+            return name + argstring.Substring(0, index + 1);
+        }
+
         public static MemberType? ParseType(string typeStr)
         {
             MemberType type;
