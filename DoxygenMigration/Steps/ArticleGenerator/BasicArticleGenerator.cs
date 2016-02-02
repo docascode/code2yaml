@@ -1,0 +1,349 @@
+﻿namespace Microsoft.Content.Build.DoxygenMigration.ArticleGenerator
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Web;
+    using System.Xml.Linq;
+    using System.Xml.XPath;
+
+    using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
+    using Microsoft.Content.Build.DoxygenMigration.Model;
+    using Microsoft.Content.Build.DoxygenMigration.Steps;
+    using Microsoft.Content.Build.DoxygenMigration.Utility;
+    using System.Text;
+    public class BasicArticleGenerator : IArticleGenerator
+    {
+        public Task<PageModel> GenerateArticleAsync(ArticleContext context, XDocument document)
+        {
+            PageModel page = new PageModel() { Items = new List<CppYaml>() };
+            CppYaml mainYaml = new CppYaml();
+            page.Items.Add(mainYaml);
+
+            HierarchyChange curChange = context.CurrentChange;
+            HierarchyChange parentChange = context.ParentChange;
+            mainYaml.Uid = curChange.Uid;
+            mainYaml.Id = YamlUtility.ParseIdFromUid(curChange.Uid);
+            mainYaml.NamespaceName = parentChange != null ? parentChange.Name : null;
+            mainYaml.Name = YamlUtility.ParseNameFromFullName(curChange.Type, mainYaml.NamespaceName, curChange.Name);
+            mainYaml.FullName = curChange.Name;
+            mainYaml.Href = YamlUtility.ParseHrefFromChangeFile(curChange.File);
+            mainYaml.Type = YamlUtility.ParseType(curChange.Type.ToString());
+            mainYaml.Parent = curChange.Parent;
+            mainYaml.Children = curChange.Children != null ? new List<string>(curChange.Children) : new List<string>();
+            mainYaml.Summary = document.Root.NullableElement("compounddef").NullableElement("briefdescription").NullableValue();
+            var location = document.Root.NullableElement("compounddef").NullableElement("location");
+            FillSource(mainYaml, location, context.GitRepo, context.GitBranch);
+            FillSees(mainYaml, document.Root.NullableElement("compounddef").NullableElement("detaileddescription"));
+            FillInheritance(mainYaml, document);
+
+            foreach (var section in document.Root.NullableElement("compounddef").Elements("sectiondef"))
+            {
+                string kind = section.NullableAttribute("kind").NullableValue();
+                var tuple = KindMapToType(kind);
+                if (tuple.Item1.HasValue && ((tuple.Item2 & AccessLevel.Private) == AccessLevel.None))
+                {
+                    foreach (var member in section.Elements("memberdef"))
+                    {
+                        var memberYaml = new CppYaml();
+                        memberYaml.Uid = member.NullableAttribute("id").NullableValue();
+                        memberYaml.Id = YamlUtility.ParseIdFromUid(memberYaml.Uid);
+                        memberYaml.Name = member.NullableElement("name").NullableValue();
+                        memberYaml.FullName = HttpUtility.HtmlDecode(member.NullableElement("definition").NullableValue());
+                        memberYaml.Href = mainYaml.Href;
+                        memberYaml.Type = tuple.Item1.Value;
+                        memberYaml.Parent = mainYaml.Uid;
+                        memberYaml.NamespaceName = mainYaml.NamespaceName;
+                        memberYaml.Summary = member.NullableElement("briefdescription").NullableValue();
+                        FillOverridden(memberYaml, member.NullableElement("reimplements"));
+                        FillSource(memberYaml, member.NullableElement("location"), context.GitRepo, context.GitBranch);
+                        FillSees(memberYaml, member.NullableElement("detaileddescription"));
+
+                        memberYaml.Syntax = new SyntaxDetailViewModel();
+                        FillSignature(memberYaml.Syntax, member);
+                        FillParameters(memberYaml.Syntax, member);
+                        FillReturn(memberYaml.Syntax, member);
+
+                        mainYaml.Children.Add(memberYaml.Uid);
+                        EmptyToNull(memberYaml);
+                        page.Items.Add(memberYaml);
+                    }
+                }
+            }
+
+            // after children are filled, fill inherited members
+            FillInheritedMembers(mainYaml, document);
+
+            EmptyToNull(mainYaml);
+            return Task.FromResult(page);
+        }
+
+        private void EmptyToNull(CppYaml yaml)
+        {
+            if (yaml.Children != null && yaml.Children.Count == 0)
+            {
+                yaml.Children = null;
+            }
+            if (yaml.Inheritance != null && yaml.Inheritance.Count == 0)
+            {
+                yaml.Inheritance = null;
+            }
+            if (yaml.InheritedMembers != null && yaml.InheritedMembers.Count == 0)
+            {
+                yaml.InheritedMembers = null;
+            }
+            if (yaml.Sees != null && yaml.Sees.Count == 0)
+            {
+                yaml.Sees = null;
+            }
+            if (yaml.Syntax != null && yaml.Syntax.Parameters != null && yaml.Syntax.Parameters.Count == 0)
+            {
+                yaml.Syntax.Parameters = null;
+            }
+
+        }
+
+        private void FillSignature(SyntaxDetailViewModel syntax, XElement member)
+        {
+            StringBuilder sb = new StringBuilder();
+            string prot = member.NullableAttribute("prot").NullableValue();
+            if (prot != null)
+            {
+                sb.Append(string.Format("{0}: ", prot));
+            }
+            string virt = member.NullableAttribute("virt").NullableValue();
+            if (virt == "virtual" || virt == "pure-virtual")
+            {
+                sb.Append("virtual ");
+            }
+            string statics = member.NullableAttribute("static").NullableValue();
+            if (statics == "yes")
+            {
+                sb.Append("static ");
+            }
+            string typeStr = HttpUtility.HtmlDecode(member.NullableElement("type").NullableValue());
+            if (typeStr != null)
+            {
+                sb.Append(typeStr + " ");
+            }
+            string name = member.NullableElement("name").NullableValue();
+            if (name != null)
+            {
+                sb.Append(name);
+            }
+            var args = member.NullableElement("argsstring").NullableValue();
+            if (args != null)
+            {
+                sb.Append(args);
+            }
+
+            var initializer = member.NullableElement("initializer").NullableValue();
+            if (initializer != null)
+            {
+                sb.Append(initializer);
+            }
+
+            if (sb.ToString() != string.Empty)
+            {
+                syntax.Content = sb.ToString();
+            }
+        }
+
+        private void FillParameters(SyntaxDetailViewModel syntax, XElement member)
+        {
+            if (member.Elements("param").Any())
+            {
+                syntax.Parameters = member.Elements("param").Select(
+                    p =>
+                    new ApiParameter
+                    {
+                        Name = p.NullableElement("declname").NullableValue(),
+                        Type = !p.NullableElement("type").NullableElement("ref").IsNull() ? p.NullableElement("type").NullableElement("ref").NullableAttribute("refid").NullableValue() : HttpUtility.HtmlDecode(p.NullableElement("type").NullableValue()),
+                        Description = ParseParamDescription(member.NullableElement("detaileddescription"), p.NullableElement("declname").NullableValue())
+                    }).ToList();
+            }
+        }
+
+        private void FillReturn(SyntaxDetailViewModel syntax, XElement member)
+        {
+            if (member.NullableElement("type").NullableValue() != null)
+            {
+                syntax.Return = new ApiParameter
+                {
+                    Type = !member.NullableElement("type").NullableElement("ref").IsNull() ? member.NullableElement("type").NullableElement("ref").NullableAttribute("refid").NullableValue() : HttpUtility.HtmlDecode(member.NullableElement("type").NullableValue()),
+                    Description = ParseReturnDescription(member.NullableElement("detaileddescription"))
+                };
+            }
+        }
+
+        private string ParseParamDescription(XElement detailedDescription, string name)
+        {
+            var param = detailedDescription.XPathSelectElement(string.Format("para/parameterlist[@kind='param']/parameteritem[parameternamelist/parametername[text() = '{0}']]/parameterdescription", name));
+            if (param == null)
+            {
+                return null;
+            }
+            return param.NullableValue();
+        }
+
+        private string ParseReturnDescription(XElement detailedDescription)
+        {
+            var returnValue = detailedDescription.XPathSelectElement("para/simplesect[@kind='return']");
+            if (returnValue == null)
+            {
+                return null;
+            }
+            return returnValue.NullableValue();
+        }
+
+        private void FillSees(CppYaml yaml, XElement detailedDescription)
+        {
+            var sees = detailedDescription.XPathSelectElements("para/simplesect[@kind='see']/para/ref");
+            yaml.Sees = (from see in sees
+                         select new CrefInfo
+                         {
+                             Type = see.NullableAttribute("refid").NullableValue(),
+                             Description = see.NullableValue()
+                         }).ToList();
+        }
+
+        private void FillOverridden(CppYaml yaml, XElement reimplements)
+        {
+            yaml.Overridden = reimplements.NullableAttribute("refid").NullableValue();
+        }
+
+        private void FillSource(CppYaml yaml, XElement location, string repo, string branch)
+        {
+            if (!location.IsNull())
+            {
+                string path = location.NullableAttribute("file").NullableValue();
+                string startline = location.NullableAttribute("line").NullableValue();
+                string bodyPath = location.NullableAttribute("bodyfile").NullableValue();
+                string bodyStartline = location.NullableAttribute("bodystart").NullableValue();
+                yaml.Source = new SourceDetail
+                {
+                    Remote = new GitDetail { RemoteRepositoryUrl = repo, RemoteBranch = branch, RelativePath = path, BodyRelativePath = bodyPath },
+                    Path = path,
+                    StartLine = startline != null ? int.Parse(startline) - 1 : 0,
+                    BodyPath = bodyPath,
+                    BodyStartLine = bodyStartline != null ? int.Parse(bodyStartline) - 1 : 0,
+                };
+            }
+        }
+
+        private void FillInheritance(CppYaml yaml, XDocument document)
+        {
+            var nodeIdHash = new Dictionary<string, string>();
+            var idHash = new Dictionary<string, List<string>>();
+            var inheritanceGraph = document.Root.NullableElement("compounddef").NullableElement("inheritancegraph");
+            foreach (var node in inheritanceGraph.Elements("node"))
+            {
+                string nodeId = node.NullableAttribute("id").NullableValue();
+                string id = node.NullableElement("link").NullableAttribute("refid").NullableValue() ?? node.NullableElement("label").NullableValue();
+                nodeIdHash.Add(nodeId, id);
+                var childNode = node.NullableElement("childnode");
+                if (!childNode.IsNull())
+                {
+                    if (!idHash.ContainsKey(nodeId))
+                    {
+                        idHash[nodeId] = new List<string>();
+                    }
+                    idHash[nodeId].Add(childNode.NullableAttribute("refid").NullableValue());
+                }
+            }
+            //yaml.Inheritance = idHash.ToDictionary(pair => nodeIdHash[pair.Key], pair => pair.Value.Select(n => nodeIdHash[n]).ToList());
+            var dict = idHash.ToDictionary(pair => nodeIdHash[pair.Key], pair => pair.Value.Select(n => nodeIdHash[n]).ToList());
+            yaml.Inheritance = new List<string>();
+            string start = yaml.Uid;
+            while (dict.ContainsKey(start))
+            {
+                start = dict[start].Single();
+                yaml.Inheritance.Add(start);
+            }
+            yaml.Inheritance.Reverse();
+        }
+
+        private void FillInheritedMembers(CppYaml yaml, XDocument document)
+        {
+            var allMembers = from m in document.Root.NullableElement("compounddef").NullableElement("listofallmembers").Elements("member")
+                             where m.NullableAttribute("prot").NullableValue() != "private"
+                             select m.NullableAttribute("refid").NullableValue();
+            yaml.InheritedMembers = allMembers.Except(yaml.Children).ToList();
+        }
+
+        private static Tuple<MemberType?, AccessLevel> KindMapToType(string kind)
+        {
+            MemberType? type = null;
+            AccessLevel level = AccessLevel.None;
+
+            if (kind.Contains("func"))
+            {
+                type = MemberType.Method;
+            }
+            else if (kind.Contains("attrib"))
+            {
+                type = MemberType.Field;
+            }
+            //else if (kind.Contains("friend"))
+            //{
+            //    type = MemberType.Friend;
+            //}
+
+            if (kind.Contains("public"))
+            {
+                level |= AccessLevel.Public;
+            }
+            if (kind.Contains("protected"))
+            {
+                level |= AccessLevel.Protected;
+            }
+            if (kind.Contains("private"))
+            {
+                level |= AccessLevel.Private;
+            }
+            if (kind.Contains("static"))
+            {
+                level |= AccessLevel.Static;
+            }
+
+            return Tuple.Create(type, level);
+        }
+    }
+
+    internal static class XContainerExtension
+    {
+        private static XElement _nullElement = new XElement("Null");
+        private static XAttribute _nullAttribute = new XAttribute("Null", string.Empty);
+
+        public static XElement NullableElement(this XContainer element, string name)
+        {
+            return element.Element(name) ?? _nullElement;
+        }
+
+        public static XAttribute NullableAttribute(this XElement element, string name)
+        {
+            return element.Attribute(name) ?? _nullAttribute;
+        }
+
+        public static string NullableValue(this XElement element)
+        {
+            return element.Value == string.Empty ? null : element.Value;
+        }
+
+        public static string NullableValue(this XAttribute attribute)
+        {
+            return attribute.Value == string.Empty ? null : attribute.Value;
+        }
+
+        public static bool IsNull(this XElement element)
+        {
+            return element.Name == _nullElement.Name;
+        }
+
+        public static bool IsNull(this XAttribute attribute)
+        {
+            return attribute.Name == _nullAttribute.Name;
+        }
+    }
+}

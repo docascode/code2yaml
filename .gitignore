@@ -1,0 +1,31 @@
+###############
+#    folder   #
+###############
+.vs/
+DROP/
+TEMP/
+packages/
+Shared/version
+**/bin/
+**/csx/
+**/obj/
+**/rcf/Debug
+**/HelpPage/XmlDocuments/XmlHelpDoc.xml
+**/TestResults
+**/FakesAssemblies
+**/StyleCop.Cache
+**/Scripts/App/*.js
+**/Scripts/App/*.map
+
+###############
+#  temp file  #
+###############
+*.log
+*.tmp
+*.vsprops
+*.suo
+*.user
+*.exe
+*.pdb
+*.sln.docstates
+**/Redis/dump.rdb
