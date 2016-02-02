@@ -91,6 +91,7 @@
     <Compile Include="Steps\ScanHierarchy.cs" />
     <Compile Include="Steps\StepCollection.cs" />
     <Compile Include="Steps\TaskParallel.cs" />
+    <Compile Include="Utility\StringUtility.cs" />
     <Compile Include="Utility\TaskUtility.cs" />
     <Compile Include="Utility\TypeUtility.cs" />
     <Compile Include="Utility\YamlUtility.cs" />

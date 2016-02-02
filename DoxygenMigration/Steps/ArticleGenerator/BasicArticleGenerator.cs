@@ -256,7 +256,7 @@
             {
                 return specs[0].Uid;
             }
-            string uid = string.Concat(specs.Select(spec => spec.Uid ?? spec.Name));
+            string uid = string.Concat(specs.Select(spec => spec.Uid ?? StringUtility.ComputeHash(spec.Name)));
             References.Add(new ReferenceViewModel
             {
                 Uid = uid,
