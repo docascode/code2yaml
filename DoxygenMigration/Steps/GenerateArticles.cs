@@ -1,6 +1,7 @@
 ﻿namespace Microsoft.Content.Build.DoxygenMigration.Steps
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
     using System.Threading;
@@ -47,12 +48,12 @@
                 throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.Changes));
             }
 
-            await changesDict.Values.ForEachInParallelAsync(
+            var infoDict = new ConcurrentDictionary<string, CppYaml>();
+
+            var pages = await changesDict.Values.SelectInParallelAsync(
                 async change =>
                 {
                     using (var input = File.OpenRead(Path.Combine(inputPath, change.File)))
-                    using (var output = File.OpenWrite(Path.Combine(outputPath, YamlUtility.ParseHrefFromChangeFile(change.File))))
-                    using (var writer = new StreamWriter(output))
                     {
                         XDocument doc = XDocument.Load(input);
                         var cloned = context.Clone();
@@ -61,9 +62,61 @@
                         cloned.SetSharedObject(Constants.ParentChange, parent);
                         var articleContext = new ArticleContext(cloned);
 
-                        PageModel page = await Generator.GenerateArticleAsync(articleContext, doc);
+                        IArticleGenerator generator = (IArticleGenerator)Generator.Clone();
+                        PageModel page = await generator.GenerateArticleAsync(articleContext, doc);
+                        foreach (var item in page.Items)
+                        {
+                            if (!infoDict.TryAdd(item.Uid, item))
+                            {
+                                context.AddLogEntry(
+                                    new LogEntry
+                                    {
+                                        Level = LogLevel.Warning,
+                                        Message = string.Format("Fail to add item {0} into infoDict", item.Uid),
+                                    });
+                            }
+                        }
+                        return page;
+                    }
+                });
+
+            // update reference and save yaml
+            await pages.ForEachInParallelAsync(
+                page =>
+                {
+                    foreach (var reference in page.References)
+                    {
+                        CppYaml yaml;
+                        if (infoDict.TryGetValue(reference.Uid, out yaml))
+                        {
+                            reference.Name = yaml.Name;
+                            reference.Type = yaml.Type;
+                            reference.FullName = yaml.FullName;
+                            reference.Href = yaml.Href;
+                            reference.Parent = yaml.Parent;
+                            reference.Syntax = yaml.Syntax;
+                            reference.Summary = yaml.Summary;
+                        }
+                        else if (reference.SpecForCpp != null)
+                        {
+                            foreach (var spec in reference.SpecForCpp)
+                            {
+                                if (spec.Uid != null)
+                                {
+                                    var specYaml = infoDict[spec.Uid];
+                                    spec.Name = specYaml.Name;
+                                    spec.FullName = specYaml.FullName;
+                                    spec.Href = specYaml.Href;
+                                }
+                            }
+                        }
+                    }
+                    using (var output = File.OpenWrite(Path.Combine(outputPath, page.Items[0].Href)))
+                    using (var writer = new StreamWriter(output))
+                    {
                         YamlSerializer.Value.Serialize(writer, page);
                     }
+                    return Task.FromResult(1);
                 });
         }
     }

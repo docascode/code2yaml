@@ -37,6 +37,10 @@
                     {
                         node.Attribute("refid").Value = RegularizeUid(node.Attribute("refid").Value);
                     }
+                    foreach (var node in doc.XPathSelectElements("//node()[@id]"))
+                    {
+                        node.Attribute("id").Value = RegularizeUid(node.Attribute("id").Value);
+                    }
                     doc.Save(Path.Combine(updatedPath, RegularizeUid(Path.GetFileNameWithoutExtension(p)) + Path.GetExtension(p)));
                     return Task.FromResult(1);
                 });

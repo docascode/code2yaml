@@ -16,7 +16,12 @@
 
     public class BasicArticleGenerator : IArticleGenerator
     {
-        private List<ReferenceViewModel> _references = new List<ReferenceViewModel>();
+        public List<ReferenceViewModel> References { get; set; }
+
+        public BasicArticleGenerator()
+        {
+            References = new List<ReferenceViewModel>();
+        }
 
         public Task<PageModel> GenerateArticleAsync(ArticleContext context, XDocument document)
         {
@@ -245,14 +250,14 @@
             }
 
             List<SpecViewModel> specs = (from node in type.CreateNavigator().Select("node()").Cast<XPathNavigator>()
-                                         select node.Name == "ref" ? new SpecViewModel { Uid = node.GetAttribute("refid", string.Empty), IsExternal = false, } : new SpecViewModel { Name = node.Value, FullName = node.Value}).ToList();
-            
+                                         select node.Name == "ref" ? new SpecViewModel { Uid = node.GetAttribute("refid", string.Empty), IsExternal = false, } : new SpecViewModel { Name = node.Value, FullName = node.Value }).ToList();
+
             if (specs.Count == 1 && specs[0].Uid != null)
             {
                 return specs[0].Uid;
             }
             string uid = string.Concat(specs.Select(spec => spec.Uid ?? spec.Name));
-            _references.Add(new ReferenceViewModel
+            References.Add(new ReferenceViewModel
             {
                 Uid = uid,
                 SpecForCpp = specs,
@@ -337,12 +342,6 @@
 
         private void FillReferences(PageModel page, XDocument document, ArticleContext context)
         {
-            var changesDict = context.Context.GetSharedObject(Constants.Changes) as Dictionary<string, HierarchyChange>;
-            if (changesDict == null)
-            {
-                throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.Changes));
-            }
-
             var referenceIds = (from node in document.XPathSelectElements("//node()[@refid and not(parent::listofallmembers) and not(ancestor::inheritancegraph) and not(ancestor::collaborationgraph)]")
                                 select node.NullableAttribute("refid").NullableValue()).Distinct();
 
@@ -353,30 +352,9 @@
                 referenceIds = referenceIds.Union(curChange.Children);
             }
 
-            foreach (var refid in referenceIds)
-            {
-                var item = page.Items.SingleOrDefault(i => i.Uid == refid);
-                HierarchyChange change;
-                changesDict.TryGetValue(refid, out change);
-                if (item == null && change == null)
-                {
-                    continue;
-                }
-                HierarchyChange parentChange = (change != null && change.Parent != null) ? changesDict[change.Parent] : null;
-                string namespaceName = parentChange != null ? parentChange.Name : null;
-                _references.Add(new ReferenceViewModel
-                {
-                    Uid = refid,
-                    Type = item != null ? item.Type : YamlUtility.ParseType(change.Type.ToString()),
-                    FullName = item != null ? item.FullName : change.Name,
-                    Name = item != null ? item.Name : YamlUtility.ParseNameFromFullName(change.Type, namespaceName, change.Name),
-                    Href = item != null ? item.Href : YamlUtility.ParseHrefFromChangeFile(change.File),
-                    IsExternal = false,
-                    Summary = item != null ? item.Summary : null,
-                });
-            }
+            References.AddRange(referenceIds.Select(refid => new ReferenceViewModel { Uid = refid }));
 
-            page.References = _references.Distinct(new ReferenceEqualComparer()).ToList();
+            page.References = References.Distinct(new ReferenceEqualComparer()).ToList();
         }
 
         private static Tuple<MemberType?, AccessLevel> KindMapToType(string kind)
@@ -415,6 +393,13 @@
             }
 
             return Tuple.Create(type, level);
+        }
+
+        public object Clone()
+        {
+            var cloned = (BasicArticleGenerator)this.MemberwiseClone();
+            cloned.References = new List<ReferenceViewModel>();
+            return cloned;
         }
     }
 
