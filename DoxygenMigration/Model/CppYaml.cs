@@ -24,7 +24,7 @@
         public string Href { get; set; }
 
         [YamlMember(Alias = "langs")]
-        public string[] SupportedLanguages { get; set; } = new string[] { "cpp" };
+        public string[] SupportedLanguages { get; set; } = new string[] { "cplusplus" };
 
         [YamlMember(Alias = "name")]
         public string Name { get; set; }

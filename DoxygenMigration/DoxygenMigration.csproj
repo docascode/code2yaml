@@ -72,6 +72,7 @@
     <Compile Include="Model\GitDetail.cs" />
     <Compile Include="Model\MemberType.cs" />
     <Compile Include="Model\PageModel.cs" />
+    <Compile Include="Model\ReferenceViewModel.cs" />
     <Compile Include="Model\SourceDetail.cs" />
     <Compile Include="Model\SyntaxDetailViewModel.cs" />
     <Compile Include="Model\TocItemYaml.cs" />

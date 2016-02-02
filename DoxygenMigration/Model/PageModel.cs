@@ -12,5 +12,8 @@
 
         [YamlMember(Alias = "metadata")]
         public Dictionary<string, object> Metadata { get; set; }
+
+        [YamlMember(Alias = "references")]
+        public List<ReferenceViewModel> References { get; set; } = new List<ReferenceViewModel>();
     }
 }

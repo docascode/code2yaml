@@ -8,6 +8,7 @@
     using System.Xml.Linq;
     using System.Xml.XPath;
 
+    using Microsoft.Content.Build.DoxygenMigration.Constants;
     using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
     using Microsoft.Content.Build.DoxygenMigration.Model;
     using Microsoft.Content.Build.DoxygenMigration.Steps;
@@ -37,6 +38,7 @@
             FillSource(mainYaml, location, context.GitRepo, context.GitBranch);
             FillSees(mainYaml, document.Root.NullableElement("compounddef").NullableElement("detaileddescription"));
             FillInheritance(mainYaml, document);
+            FillSignatureForMainYaml(mainYaml, document.Root.NullableElement("compounddef"));
 
             foreach (var section in document.Root.NullableElement("compounddef").Elements("sectiondef"))
             {
@@ -76,6 +78,7 @@
             FillInheritedMembers(mainYaml, document);
 
             EmptyToNull(mainYaml);
+            FillReferences(page, document, context);
             return Task.FromResult(page);
         }
 
@@ -102,6 +105,38 @@
                 yaml.Syntax.Parameters = null;
             }
 
+        }
+
+        private void FillSignatureForMainYaml(CppYaml mainYaml, XElement member)
+        {
+            mainYaml.Syntax = new SyntaxDetailViewModel();
+            StringBuilder sb = new StringBuilder();
+            string prot = member.NullableAttribute("prot").NullableValue();
+            if (prot != null)
+            {
+                sb.Append(string.Format("{0}: ", prot));
+            }
+            string virt = member.NullableAttribute("virt").NullableValue();
+            if (virt == "virtual" || virt == "pure-virtual")
+            {
+                sb.Append("virtual ");
+            }
+            string statics = member.NullableAttribute("static").NullableValue();
+            if (statics == "yes")
+            {
+                sb.Append("static ");
+            }
+            string kind = member.NullableAttribute("kind").NullableValue();
+            if (kind != null)
+            {
+                sb.Append(string.Format("{0} ", kind));
+            }
+            sb.Append(mainYaml.Name);
+
+            if (sb.ToString() != string.Empty)
+            {
+                mainYaml.Syntax.Content = sb.ToString();
+            }
         }
 
         private void FillSignature(SyntaxDetailViewModel syntax, XElement member)
@@ -270,6 +305,48 @@
                              where m.NullableAttribute("prot").NullableValue() != "private"
                              select m.NullableAttribute("refid").NullableValue();
             yaml.InheritedMembers = allMembers.Except(yaml.Children).ToList();
+        }
+
+        private void FillReferences(PageModel page, XDocument document, ArticleContext context)
+        {
+            var changesDict = context.Context.GetSharedObject(Constants.Changes) as Dictionary<string, HierarchyChange>;
+            if (changesDict == null)
+            {
+                throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.Changes));
+            }
+
+            var referenceIds = (from node in document.XPathSelectElements("//node()[@refid and not(parent::listofallmembers) and not(ancestor::inheritancegraph) and not(ancestor::collaborationgraph)]")
+                                select node.NullableAttribute("refid").NullableValue()).Distinct();
+
+            // add nested children for namespace api
+            var curChange = context.CurrentChange;
+            if (curChange.Type == HierarchyType.Namespace)
+            {
+                referenceIds = referenceIds.Union(curChange.Children);
+            }
+
+            foreach (var refid in referenceIds)
+            {
+                var item = page.Items.SingleOrDefault(i => i.Uid == refid);
+                HierarchyChange change;
+                changesDict.TryGetValue(refid, out change);
+                if (item == null && change == null)
+                {
+                    continue;
+                }
+                HierarchyChange parentChange = (change != null && change.Parent != null) ? changesDict[change.Parent] : null;
+                string namespaceName = parentChange != null ? parentChange.Name : null;
+                page.References.Add(new ReferenceViewModel
+                {
+                    Uid = refid,
+                    Type = item != null ? item.Type : YamlUtility.ParseType(change.Type.ToString()),
+                    FullName = item != null ? item.FullName : change.Name,
+                    Name = item != null ? item.Name : YamlUtility.ParseNameFromFullName(change.Type, namespaceName, change.Name),
+                    Href = item != null ? item.Href : YamlUtility.ParseHrefFromChangeFile(change.File),
+                    IsExternal = false,
+                    Summary = item != null ? item.Summary : null,
+                });
+            }
         }
 
         private static Tuple<MemberType?, AccessLevel> KindMapToType(string kind)
