@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using System.Xml.Linq;
     using System.Xml.XPath;
@@ -12,9 +13,11 @@
     using Microsoft.Content.Build.DoxygenMigration.Model;
     using Microsoft.Content.Build.DoxygenMigration.Steps;
     using Microsoft.Content.Build.DoxygenMigration.Utility;
-    using System.Text;
+
     public class BasicArticleGenerator : IArticleGenerator
     {
+        private List<ReferenceViewModel> _references = new List<ReferenceViewModel>();
+
         public Task<PageModel> GenerateArticleAsync(ArticleContext context, XDocument document)
         {
             PageModel page = new PageModel() { Items = new List<CppYaml>() };
@@ -236,15 +239,25 @@
 
         private string ParseType(XElement type)
         {
-            if (type.IsNull())
+            if (type.NullableElement("ref").IsNull())
             {
-                return null;
+                return type.NullableValue();
             }
 
-            //return string.Concat(from node in type.CreateNavigator().Select("node()").Cast<XPathNavigator>()
-            //                     select node.Name == "ref" ? node.GetAttribute("refid", string.Empty) : node.Value);
-
-            return type.NullableElement("ref").IsNull() ? type.NullableValue() : type.NullableElement("ref").NullableAttribute("refid").NullableValue();
+            List<SpecViewModel> specs = (from node in type.CreateNavigator().Select("node()").Cast<XPathNavigator>()
+                                         select node.Name == "ref" ? new SpecViewModel { Uid = node.GetAttribute("refid", string.Empty), IsExternal = false, } : new SpecViewModel { Name = node.Value, FullName = node.Value}).ToList();
+            
+            if (specs.Count == 1 && specs[0].Uid != null)
+            {
+                return specs[0].Uid;
+            }
+            string uid = string.Concat(specs.Select(spec => spec.Uid ?? spec.Name));
+            _references.Add(new ReferenceViewModel
+            {
+                Uid = uid,
+                SpecForCpp = specs,
+            });
+            return uid;
         }
 
         private void FillSees(CppYaml yaml, XElement detailedDescription)
@@ -351,7 +364,7 @@
                 }
                 HierarchyChange parentChange = (change != null && change.Parent != null) ? changesDict[change.Parent] : null;
                 string namespaceName = parentChange != null ? parentChange.Name : null;
-                page.References.Add(new ReferenceViewModel
+                _references.Add(new ReferenceViewModel
                 {
                     Uid = refid,
                     Type = item != null ? item.Type : YamlUtility.ParseType(change.Type.ToString()),
@@ -362,6 +375,8 @@
                     Summary = item != null ? item.Summary : null,
                 });
             }
+
+            page.References = _references.Distinct(new ReferenceEqualComparer()).ToList();
         }
 
         private static Tuple<MemberType?, AccessLevel> KindMapToType(string kind)
@@ -436,6 +451,19 @@
         public static bool IsNull(this XAttribute attribute)
         {
             return attribute.Name == _nullAttribute.Name;
+        }
+    }
+
+    internal class ReferenceEqualComparer : IEqualityComparer<ReferenceViewModel>
+    {
+        public bool Equals(ReferenceViewModel x, ReferenceViewModel y)
+        {
+            return x.Uid == y.Uid;
+        }
+
+        public int GetHashCode(ReferenceViewModel obj)
+        {
+            return obj.Uid.GetHashCode();
         }
     }
 }

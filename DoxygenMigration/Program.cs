@@ -27,6 +27,7 @@
             context.SetSharedObject(Constants.Constants.GitRepo, _gitRepo);
             context.SetSharedObject(Constants.Constants.GitBranch, _gitBranch);
             var procedure = new StepCollection(
+                new PreprocessXml(),
                 new ScanHierarchy(),
                 new TaskParallel(
                     new List<IStep>

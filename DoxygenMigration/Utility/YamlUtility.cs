@@ -10,7 +10,7 @@
 
     public static class YamlUtility
     {
-        private static readonly Regex IdRegex = new Regex(@"^(namespace | class | struct | enum)(\S+)$", RegexOptions.Compiled);
+        private static readonly Regex IdRegex = new Regex(@"^(namespace|class|struct|enum)(\S+)$", RegexOptions.Compiled);
 
         public static string ParseIdFromUid(string uid)
         {

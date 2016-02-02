@@ -31,6 +31,9 @@
         [YamlMember(Alias = "type")]
         public MemberType? Type { get; set; }
 
+        [YamlMember(Alias = "spec.csharp")]
+        public List<SpecViewModel> SpecForCpp { get; set; }
+
         [YamlMember(Alias = "summary")]
         public string Summary { get; set; }
 
