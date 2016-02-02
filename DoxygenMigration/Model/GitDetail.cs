@@ -9,9 +9,6 @@
         /// <summary>
         /// Relative path of current file to the Git Root Directory
         /// </summary>
-        [YamlMember(Alias = "headerPath")]
-        public string HeaderRelativePath { get; set; }
-
         [YamlMember(Alias = "path")]
         public string RelativePath { get; set; }
 
@@ -43,7 +40,7 @@
 
         public override string ToString()
         {
-            return string.Format("branch: {0}, url: {1}, local: {2}, desc: {3}, file: {4}, headerfile: {5}", RemoteBranch, RemoteRepositoryUrl, LocalWorkingDirectory, Description, RelativePath, HeaderRelativePath);
+            return string.Format("branch: {0}, url: {1}, local: {2}, desc: {3}, file: {4}", RemoteBranch, RemoteRepositoryUrl, LocalWorkingDirectory, Description, RelativePath);
         }
     }
 }

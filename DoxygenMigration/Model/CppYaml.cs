@@ -41,6 +41,9 @@
         [YamlMember(Alias = "documentation")]
         public SourceDetail Documentation { get; set; }
 
+        [YamlMember(Alias = "header")]
+        public SourceDetail Header { get; set; }
+
         [YamlMember(Alias = "assemblies")]
         public List<string> AssemblyNameList { get; set; }
 

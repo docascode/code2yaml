@@ -289,13 +289,17 @@
                 string headerStartline = location.NullableAttribute("line").NullableValue();
                 string path = location.NullableAttribute("bodyfile").NullableValue();
                 string startline = location.NullableAttribute("bodystart").NullableValue();
+                yaml.Header = new SourceDetail
+                {
+                    Remote = new GitDetail { RemoteRepositoryUrl = repo, RemoteBranch = branch, RelativePath = headerPath },
+                    Path = headerPath,
+                    StartLine = headerStartline != null ? int.Parse(headerStartline) - 1 : 0,
+                };
                 yaml.Source = new SourceDetail
                 {
-                    Remote = new GitDetail { RemoteRepositoryUrl = repo, RemoteBranch = branch, HeaderRelativePath = headerPath, RelativePath = path ?? headerPath },
-                    HeaderPath = headerPath,
-                    HeaderStartLine = headerStartline != null ? int.Parse(headerStartline) - 1 : 0,
-                    Path = path ?? headerPath,
-                    StartLine = path != null ? (startline != null ? int.Parse(startline) - 1 : 0) : (headerStartline != null ? int.Parse(headerStartline) - 1 : 0),
+                    Remote = new GitDetail { RemoteRepositoryUrl = repo, RemoteBranch = branch, RelativePath = path ?? yaml.Header.Path },
+                    Path = path ?? yaml.Header.Path,
+                    StartLine = path != null ? (startline != null ? int.Parse(startline) - 1 : 0) : yaml.Header.StartLine,
                 };
             }
         }
