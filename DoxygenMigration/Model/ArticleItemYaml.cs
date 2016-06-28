@@ -6,7 +6,7 @@
     using YamlDotNet.Serialization;
 
     [Serializable]
-    public class CppYaml
+    public class ArticleItemYaml
     {
         [YamlMember(Alias = "uid")]
         public string Uid { get; set; }
@@ -24,7 +24,7 @@
         public string Href { get; set; }
 
         [YamlMember(Alias = "langs")]
-        public string[] SupportedLanguages { get; set; } = new string[] { "cplusplus" };
+        public string[] SupportedLanguages { get; set; }
 
         [YamlMember(Alias = "name")]
         public string Name { get; set; }
@@ -49,6 +49,9 @@
 
         [YamlMember(Alias = "namespace")]
         public string NamespaceName { get; set; }
+
+        [YamlMember(Alias = "package")]
+        public string PackageName { get; set; }
 
         [YamlMember(Alias = "summary")]
         public string Summary { get; set; }

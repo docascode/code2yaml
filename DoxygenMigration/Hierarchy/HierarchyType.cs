@@ -6,5 +6,6 @@
         Class,
         Struct,
         Enum,
+        Interface,
     }
 }

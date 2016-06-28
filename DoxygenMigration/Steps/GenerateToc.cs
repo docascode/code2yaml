@@ -38,11 +38,10 @@
                 from change in changesDict.Values
                 where change.Parent == null
                 orderby change.Name.ToLower()
-                select FromHierarchyChange(changesDict, change));
+                select FromHierarchyChange(changesDict, change, context));
 
             string tocFile = Path.Combine(outputPath, Constants.TocYamlFileName);
-            using (var stream = File.OpenWrite(tocFile))
-            using (var writer = new StreamWriter(stream))
+            using (var writer = new StreamWriter(tocFile))
             {
                 new YamlSerializer().Serialize(writer, tocYaml);
             }
@@ -50,18 +49,24 @@
             return Task.FromResult(1);
         }
 
-        private TocItemYaml FromHierarchyChange(IReadOnlyDictionary<string, HierarchyChange> changeDict, HierarchyChange change)
+        private TocItemYaml FromHierarchyChange(IReadOnlyDictionary<string, HierarchyChange> changeDict, HierarchyChange change, BuildContext context)
         {
             string namespaceName = change.Parent != null ? changeDict[change.Parent].Name : null;
+            string spliter = Constants.NameSpliter;
+            var lang = (string)context.GetSharedObject(Constants.Language);
+            if (lang != "cplusplus")
+            {
+                spliter = Constants.Dot;
+            }
             return new TocItemYaml
             {
                 Uid = change.Uid,
-                Name = YamlUtility.ParseNameFromFullName(change.Type, namespaceName, change.Name),
+                Name = YamlUtility.ParseNameFromFullName(change.Type, namespaceName, change.Name, spliter),
                 Href = YamlUtility.ParseHrefFromChangeFile(change.File),
                 Items = change.Children.Any() ? new TocYaml(
-                    from child in change.Children
-                    orderby changeDict[child].Name.ToLower()
-                    select FromHierarchyChange(changeDict, changeDict[child])) : null,
+                from child in change.Children
+                orderby changeDict[child].Name.ToLower()
+                select FromHierarchyChange(changeDict, changeDict[child], context)) : null,
             };
         }
     }

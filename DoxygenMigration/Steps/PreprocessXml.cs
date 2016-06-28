@@ -12,7 +12,7 @@
     
     public class PreprocessXml : IStep
     {
-        private static readonly Regex IdRegex = new Regex(@"^(namespace|class|struct|enum)(\S+)$", RegexOptions.Compiled);
+        private static readonly Regex IdRegex = new Regex(@"^(namespace|class|struct|enum|interface)(\S+)$", RegexOptions.Compiled);
 
         public string StepName { get { return "Preprocess"; } }
 
@@ -26,7 +26,12 @@
 
             string dirName = Path.GetDirectoryName(inputPath);
             string updatedFolderName = Path.GetFileName(inputPath) + "_update";
-            var dirInfo = Directory.CreateDirectory(Path.Combine(dirName, updatedFolderName));
+            var updatedFolderPath = Path.Combine(dirName, updatedFolderName);
+            if (Directory.Exists(updatedFolderPath))
+            {
+                Directory.Delete(updatedFolderPath, recursive: true);
+            }
+            var dirInfo = Directory.CreateDirectory(updatedFolderPath);
             string updatedPath = dirInfo.FullName;
 
             await Directory.EnumerateFiles(inputPath, "*.xml").ForEachInParallelAsync(
@@ -41,6 +46,14 @@
                     {
                         node.Attribute("id").Value = RegularizeUid(node.Attribute("id").Value);
                     }
+                    var lang = (string)context.GetSharedObject(Constants.Language);
+                    if (lang != "cplusplus")
+                    {
+                        foreach (var node in doc.XPathSelectElements("//name | //label"))
+                        {
+                            node.Value = RegularizeName(node.Value);
+                        }
+                    }
                     doc.Save(Path.Combine(updatedPath, RegularizeUid(Path.GetFileNameWithoutExtension(p)) + Path.GetExtension(p)));
                     return Task.FromResult(1);
                 });
@@ -54,7 +67,12 @@
             {
                 uid = m.Groups[2].Value;
             }
-            return uid.Replace(Constants.CppIdSpliter, ".");
+            return uid.Replace(Constants.IdSpliter, Constants.Dot);
+        }
+
+        private static string RegularizeName(string name)
+        {
+            return name.Replace(Constants.NameSpliter, Constants.Dot);
         }
     }
 }

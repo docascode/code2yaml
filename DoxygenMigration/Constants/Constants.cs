@@ -11,13 +11,16 @@
         public const string ParentChange = "parent_change";
         public const string GitRepo = "git_repo";
         public const string GitBranch = "git_branch";
+        public const string Language = "language";
         public const string XmlExtension = ".xml";
         public const string YamlExtension = ".yml";
-        public const string CppIdSpliter = "_1_1";
-        public const string CppSpliter = "::";
+        public const string IdSpliter = "_1_1";
+        public const string NameSpliter = "::";
         public const string CmdArgInputPath = "inputpath:";
         public const string CmdArgOutputPath = "outputpath:";
         public const string CmdArgGitRepo = "gitrepo:";
         public const string CmdArgGitBranch = "gitbranch:";
+        public const string CmdArgLanguage = "lang:";
+        public const string Dot = ".";
     }
 }

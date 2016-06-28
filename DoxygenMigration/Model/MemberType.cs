@@ -12,6 +12,7 @@
         Field,
         Method,//MemberFunction
         //Friend,
+        Interface,
     }
 
     [Flags]
@@ -23,5 +24,6 @@
         Protected = 4,
         Static = 8,
         Virtual = 16,
+        Package = 32,
     }
 }

@@ -48,37 +48,36 @@
                 throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.Changes));
             }
 
-            var infoDict = new ConcurrentDictionary<string, CppYaml>();
-
+            var infoDict = new ConcurrentDictionary<string, ArticleItemYaml>();
             var pages = await changesDict.Values.SelectInParallelAsync(
-                async change =>
-                {
-                    using (var input = File.OpenRead(Path.Combine(inputPath, change.File)))
-                    {
-                        XDocument doc = XDocument.Load(input);
-                        var cloned = context.Clone();
-                        cloned.SetSharedObject(Constants.CurrentChange, change);
-                        HierarchyChange parent = change.Parent != null ? changesDict[change.Parent] : null;
-                        cloned.SetSharedObject(Constants.ParentChange, parent);
-                        var articleContext = new ArticleContext(cloned);
+               async change =>
+               {
+                   using (var input = File.OpenRead(Path.Combine(inputPath, change.File)))
+                   {
+                       XDocument doc = XDocument.Load(input);
+                       var cloned = context.Clone();
+                       cloned.SetSharedObject(Constants.CurrentChange, change);
+                       HierarchyChange parent = change.Parent != null ? changesDict[change.Parent] : null;
+                       cloned.SetSharedObject(Constants.ParentChange, parent);
+                       var articleContext = new ArticleContext(cloned);
 
-                        IArticleGenerator generator = (IArticleGenerator)Generator.Clone();
-                        PageModel page = await generator.GenerateArticleAsync(articleContext, doc);
-                        foreach (var item in page.Items)
-                        {
-                            if (!infoDict.TryAdd(item.Uid, item))
-                            {
-                                context.AddLogEntry(
-                                    new LogEntry
-                                    {
-                                        Level = LogLevel.Warning,
-                                        Message = string.Format("Fail to add item {0} into infoDict", item.Uid),
-                                    });
-                            }
-                        }
-                        return page;
-                    }
-                });
+                       IArticleGenerator generator = (IArticleGenerator)Generator.Clone();
+                       PageModel page = await generator.GenerateArticleAsync(articleContext, doc);
+                       foreach (var item in page.Items)
+                       {
+                           if (!infoDict.TryAdd(item.Uid, item))
+                           {
+                               context.AddLogEntry(
+                                   new LogEntry
+                                   {
+                                       Level = LogLevel.Warning,
+                                       Message = $"Duplicate items {item.Uid} found in {change.File}.",
+                                   });
+                           }
+                       }
+                       return page;
+                   }
+               });
 
             // update reference and save yaml
             await pages.ForEachInParallelAsync(
@@ -86,7 +85,7 @@
                 {
                     foreach (var reference in page.References)
                     {
-                        CppYaml yaml;
+                        ArticleItemYaml yaml;
                         if (infoDict.TryGetValue(reference.Uid, out yaml))
                         {
                             reference.Name = yaml.Name;
@@ -97,9 +96,9 @@
                             reference.Syntax = yaml.Syntax;
                             reference.Summary = yaml.Summary;
                         }
-                        else if (reference.SpecForCpp != null)
+                        else if (reference.SpecForJava != null)
                         {
-                            foreach (var spec in reference.SpecForCpp)
+                            foreach (var spec in reference.SpecForJava)
                             {
                                 if (spec.Uid != null)
                                 {
@@ -111,8 +110,7 @@
                             }
                         }
                     }
-                    using (var output = File.OpenWrite(Path.Combine(outputPath, page.Items[0].Href)))
-                    using (var writer = new StreamWriter(output))
+                    using (var writer = new StreamWriter(Path.Combine(outputPath, page.Items[0].Href)))
                     {
                         YamlSerializer.Value.Serialize(writer, page);
                     }

@@ -8,7 +8,7 @@
     public class PageModel
     {
         [YamlMember(Alias = "items")]
-        public List<CppYaml> Items { get; set; } = new List<CppYaml>();
+        public List<ArticleItemYaml> Items { get; set; } = new List<ArticleItemYaml>();
 
         [YamlMember(Alias = "metadata")]
         public Dictionary<string, object> Metadata { get; set; }

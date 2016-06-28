@@ -34,6 +34,9 @@
         [YamlMember(Alias = "spec.cplusplus")]
         public List<SpecViewModel> SpecForCpp { get; set; }
 
+        [YamlMember(Alias = "spec.java")]
+        public List<SpecViewModel> SpecForJava { get; set; }
+
         [YamlMember(Alias = "summary")]
         public string Summary { get; set; }
 

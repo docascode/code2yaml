@@ -63,11 +63,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\XHtmlWriter.cs" />
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="Hierarchy\HierarchyChange.cs" />
     <Compile Include="Hierarchy\HierarchyType.cs" />
     <Compile Include="Model\ApiParameter.cs" />
-    <Compile Include="Model\CppYaml.cs" />
+    <Compile Include="Model\ArticleItemYaml.cs" />
     <Compile Include="Model\CrefInfo.cs" />
     <Compile Include="Model\GitDetail.cs" />
     <Compile Include="Model\MemberType.cs" />
@@ -80,8 +81,11 @@
     <Compile Include="Model\TocYaml.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Steps\ArticleContext.cs" />
+    <Compile Include="Steps\ArticleGenerator\ArticleGeneratorFactory.cs" />
     <Compile Include="Steps\ArticleGenerator\BasicArticleGenerator.cs" />
+    <Compile Include="Steps\ArticleGenerator\CppArticleGenerator.cs" />
     <Compile Include="Steps\ArticleGenerator\IArticleGenerator.cs" />
+    <Compile Include="Steps\ArticleGenerator\JavaArticleGenerator.cs" />
     <Compile Include="Steps\BuildContext.cs" />
     <Compile Include="Steps\GenerateArticles.cs" />
     <Compile Include="Steps\GenerateToc.cs" />
@@ -91,6 +95,7 @@
     <Compile Include="Steps\ScanHierarchy.cs" />
     <Compile Include="Steps\StepCollection.cs" />
     <Compile Include="Steps\TaskParallel.cs" />
+    <Compile Include="Steps\TripleSlashCommentTransformer.cs" />
     <Compile Include="Utility\StringUtility.cs" />
     <Compile Include="Utility\TaskUtility.cs" />
     <Compile Include="Utility\TypeUtility.cs" />
@@ -99,6 +104,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Steps\TripleSlashCommentTransform.xsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

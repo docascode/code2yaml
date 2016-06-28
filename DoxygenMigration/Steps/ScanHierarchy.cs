@@ -45,7 +45,9 @@
                                }).ToDictionary(c => c.Uid);
             }
 
-            // Parse File to get parent/children info
+            // Parse File to get parent/children info and package-private items
+            // assume that couldn't define public class inside package-private class
+            var itemsPackagePrivate = new List<string>();
             foreach (var pair in _changeDict)
             {
                 using (var stream = File.OpenRead(Path.Combine(inputPath, pair.Value.File)))
@@ -58,7 +60,16 @@
                     {
                         throw new ApplicationException(string.Format("there is no compounddef section for {0}", parent));
                     }
-                    var innerClasses = def.Elements("innerclass");
+
+                    // filter out package-private item
+                    var prot = (string)def.Attribute("prot");
+                    if ("package".Equals(prot, StringComparison.OrdinalIgnoreCase))
+                    {
+                        itemsPackagePrivate.Add(pair.Key);
+                        continue;
+                    }
+
+                    var innerClasses = def.Elements("innerclass").Where(e => !"package".Equals((string)e.Attribute("prot"), StringComparison.OrdinalIgnoreCase));
                     foreach (var inner in innerClasses)
                     {
                         string innerId = (string)inner.Attribute("refid");
@@ -72,6 +83,10 @@
                     }
                     pair.Value.Children = children;
                 }
+            }
+            foreach (var key in itemsPackagePrivate)
+            {
+                _changeDict.Remove(key);
             }
 
             // remove namespace that is empty and update its parent

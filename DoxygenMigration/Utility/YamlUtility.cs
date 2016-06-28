@@ -12,14 +12,19 @@
     {
         private static readonly Regex IdRegex = new Regex(@"^(namespace|class|struct|enum)(\S+)$", RegexOptions.Compiled);
 
-        public static string ParseIdFromUid(string uid)
+        public static string ParseIdFromUid(string uid, string spliter = Constants.NameSpliter)
         {
-            int index = uid.LastIndexOf(Constants.CppIdSpliter);
+            if (string.IsNullOrEmpty(spliter))
+            {
+                throw new ArgumentNullException("spliter");
+            }
+
+            int index = uid.LastIndexOf(spliter);
             if (index < 0)
             {
-                return IdRegex.Match(uid).Groups[2].Value;
+                return uid;
             }
-            return uid.Substring(index + Constants.CppIdSpliter.Length);
+            return uid.Substring(index + spliter.Length);
         }
 
         public static string ParseHrefFromChangeFile(string changeFile)
@@ -27,18 +32,23 @@
             return Path.ChangeExtension(changeFile, Constants.YamlExtension);
         }
 
-        public static string ParseNameFromFullName(HierarchyType htype, string namespaceName, string fullName)
+        public static string ParseNameFromFullName(HierarchyType htype, string wrapperName, string fullName, string spliter = Constants.NameSpliter)
         {
+            if (string.IsNullOrEmpty(spliter))
+            {
+                throw new ArgumentNullException("spliter");
+            }
+
             switch (htype)
             {
                 case HierarchyType.Namespace:
                     return fullName;
                 default:
-                    if (namespaceName == null)
+                    if (wrapperName == null)
                     {
                         return fullName;
                     }
-                    return fullName.Substring(namespaceName.Length + Constants.CppSpliter.Length);
+                    return fullName.Substring(wrapperName.Length + spliter.Length);
             }
         }
 
