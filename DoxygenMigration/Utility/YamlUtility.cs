@@ -71,5 +71,14 @@
             }
             return null;
         }
+
+        public static string RegularizeName(string name, string nameSpliter)
+        {
+            if (name == null)
+            {
+                return name;
+            }
+            return name.Replace(Constants.NameSpliter, nameSpliter);
+        }
     }
 }

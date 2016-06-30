@@ -45,9 +45,9 @@
                                }).ToDictionary(c => c.Uid);
             }
 
-            // Parse File to get parent/children info and package-private items
-            // assume that couldn't define public class inside package-private class
-            var itemsPackagePrivate = new List<string>();
+            // Parse File to get parent/children info and package-private/private items
+            // assume that couldn't define public class inside package-private/private class
+            var itemsToRemove = new List<string>();
             foreach (var pair in _changeDict)
             {
                 using (var stream = File.OpenRead(Path.Combine(inputPath, pair.Value.File)))
@@ -63,13 +63,14 @@
 
                     // filter out package-private item
                     var prot = (string)def.Attribute("prot");
-                    if ("package".Equals(prot, StringComparison.OrdinalIgnoreCase))
+                    if (IsFiltered(prot))
                     {
-                        itemsPackagePrivate.Add(pair.Key);
+                        itemsToRemove.Add(pair.Key);
                         continue;
                     }
 
-                    var innerClasses = def.Elements("innerclass").Where(e => !"package".Equals((string)e.Attribute("prot"), StringComparison.OrdinalIgnoreCase));
+                    // check innerclass's access label because Doxygen would still output nested private/package-private classes
+                    var innerClasses = def.Elements("innerclass").Where(e => !IsFiltered((string)e.Attribute("prot")));
                     foreach (var inner in innerClasses)
                     {
                         string innerId = (string)inner.Attribute("refid");
@@ -84,7 +85,7 @@
                     pair.Value.Children = children;
                 }
             }
-            foreach (var key in itemsPackagePrivate)
+            foreach (var key in itemsToRemove)
             {
                 _changeDict.Remove(key);
             }
@@ -145,6 +146,15 @@
                 return null;
             }
             return htype;
+        }
+
+        private static bool IsFiltered(string prot)
+        {
+            if (prot == null)
+            {
+                return false;
+            }
+            return prot.Contains("private") || prot.Contains("package");
         }
     }
 }

@@ -1,17 +1,22 @@
 ﻿namespace Microsoft.Content.Build.DoxygenMigration.ArticleGenerator
 {
-    using System;
     using System.Collections.Generic;
+    using System.Text;
     using System.Xml.Linq;
 
     using Microsoft.Content.Build.DoxygenMigration.Constants;
+    using Microsoft.Content.Build.DoxygenMigration.DeclarationGenerator;
     using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
     using Microsoft.Content.Build.DoxygenMigration.Model;
+    using Microsoft.Content.Build.DoxygenMigration.NameGenerator;
     using Microsoft.Content.Build.DoxygenMigration.Steps;
-    using Microsoft.Content.Build.DoxygenMigration.Utility;
 
     public class CppArticleGenerator : BasicArticleGenerator
     {
+        public CppArticleGenerator() : base(new CppNameGenerator(), new CppDeclarationGenerator())
+        {
+        }
+
         public override string Language
         {
             get
@@ -20,7 +25,7 @@
             }
         }
 
-        protected override void FillLanguageSpecificMetadata(ArticleItemYaml yaml, ArticleContext context, XElement xmlFragment)
+        protected override void FillLanguageSpecificMetadata(ArticleItemYaml yaml, ArticleContext context, XElement node)
         {
             HierarchyChange curChange = context.CurrentChange;
             HierarchyChange parentChange = context.ParentChange;
@@ -36,16 +41,11 @@
             };
         }
 
-        protected override string WriteAccessLabel(string access)
-        {
-            return $"{access}: ";
-        }
-
-        protected override string NameSpliter
+        protected override bool ShouldWriteHeader
         {
             get
             {
-                return Constants.NameSpliter;
+                return true;
             }
         }
     }

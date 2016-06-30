@@ -10,12 +10,15 @@
     using Microsoft.Content.Build.DoxygenMigration.Constants;
     using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
     using Microsoft.Content.Build.DoxygenMigration.Model;
+    using Microsoft.Content.Build.DoxygenMigration.NameGenerator;
     using Microsoft.Content.Build.DoxygenMigration.Utility;
 
     using DocAsCode.YamlSerialization;
 
     public class GenerateToc : IStep
     {
+        public INameGenerator NameGenerator { get; set; }
+
         public string StepName
         {
             get { return "GenerateToc"; }
@@ -37,8 +40,9 @@
             TocYaml tocYaml = new TocYaml(
                 from change in changesDict.Values
                 where change.Parent == null
-                orderby change.Name.ToLower()
-                select FromHierarchyChange(changesDict, change, context));
+                let toc = FromHierarchyChange(changesDict, change, context)
+                orderby toc.Name.ToLower()
+                select toc);
 
             string tocFile = Path.Combine(outputPath, Constants.TocYamlFileName);
             using (var writer = new StreamWriter(tocFile))
@@ -51,22 +55,17 @@
 
         private TocItemYaml FromHierarchyChange(IReadOnlyDictionary<string, HierarchyChange> changeDict, HierarchyChange change, BuildContext context)
         {
-            string namespaceName = change.Parent != null ? changeDict[change.Parent].Name : null;
-            string spliter = Constants.NameSpliter;
-            var lang = (string)context.GetSharedObject(Constants.Language);
-            if (lang != "cplusplus")
-            {
-                spliter = Constants.Dot;
-            }
+            var parentChange = change.Parent != null ? changeDict[change.Parent] : null;
             return new TocItemYaml
             {
                 Uid = change.Uid,
-                Name = YamlUtility.ParseNameFromFullName(change.Type, namespaceName, change.Name, spliter),
+                Name = NameGenerator.GenerateTypeName(new NameGeneratorContext { CurrentChange = change, ParentChange = parentChange }, null),
                 Href = YamlUtility.ParseHrefFromChangeFile(change.File),
                 Items = change.Children.Any() ? new TocYaml(
                 from child in change.Children
-                orderby changeDict[child].Name.ToLower()
-                select FromHierarchyChange(changeDict, changeDict[child], context)) : null,
+                let toc = FromHierarchyChange(changeDict, changeDict[child], context)
+                orderby toc.Name.ToLower()
+                select toc) : null,
             };
         }
     }

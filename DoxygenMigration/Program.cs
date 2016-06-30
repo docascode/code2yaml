@@ -5,7 +5,8 @@
     using System.Linq;
     using Microsoft.Content.Build.DoxygenMigration.ArticleGenerator;
     using Microsoft.Content.Build.DoxygenMigration.Constants;
-    using Microsoft.Content.Build.DoxygenMigration.Steps;
+    using Microsoft.Content.Build.DoxygenMigration.NameGenerator;
+    using Microsoft.Content.Build.DoxygenMigration.Steps;  
 
     class Program
     {
@@ -34,7 +35,7 @@
                 new TaskParallel(
                     new List<IStep>
                     {
-                        new GenerateToc(),
+                        new GenerateToc { NameGenerator = NameGeneratorFactory.Create(_lang) },
                         new GenerateArticles { Generator = ArticleGeneratorFactory.Create(_lang) },
                     }));
             try

@@ -1,17 +1,24 @@
 ﻿namespace Microsoft.Content.Build.DoxygenMigration.ArticleGenerator
 {
-    using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
     using System.Xml.Linq;
+    using System.Xml.XPath;
 
     using Microsoft.Content.Build.DoxygenMigration.Constants;
+    using Microsoft.Content.Build.DoxygenMigration.DeclarationGenerator;
     using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
     using Microsoft.Content.Build.DoxygenMigration.Model;
+    using Microsoft.Content.Build.DoxygenMigration.NameGenerator;
     using Microsoft.Content.Build.DoxygenMigration.Steps;
-    using Microsoft.Content.Build.DoxygenMigration.Utility;
 
     public class JavaArticleGenerator : BasicArticleGenerator
     {
+        public JavaArticleGenerator() : base(new JavaNameGenerator(), new JavaDeclarationGenerator())
+        {
+        }
+
         public override string Language
         {
             get
@@ -20,7 +27,7 @@
             }
         }
 
-        protected override void FillLanguageSpecificMetadata(ArticleItemYaml yaml, ArticleContext context, XElement xmlFragment)
+        protected override void FillLanguageSpecificMetadata(ArticleItemYaml yaml, ArticleContext context, XElement node)
         {
             HierarchyChange curChange = context.CurrentChange;
             HierarchyChange parentChange = context.ParentChange;
@@ -36,20 +43,11 @@
             };
         }
 
-        protected override string WriteAccessLabel(string access)
-        {
-            if (access.Contains("package"))
-            {
-                return string.Empty;
-            }
-            return $"{access} ";
-        }
-
-        protected override string NameSpliter
+        protected override bool ShouldWriteHeader
         {
             get
             {
-                return Constants.Dot;
+                return false;
             }
         }
     }

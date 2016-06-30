@@ -46,14 +46,6 @@
                     {
                         node.Attribute("id").Value = RegularizeUid(node.Attribute("id").Value);
                     }
-                    var lang = (string)context.GetSharedObject(Constants.Language);
-                    if (lang != "cplusplus")
-                    {
-                        foreach (var node in doc.XPathSelectElements("//name | //label"))
-                        {
-                            node.Value = RegularizeName(node.Value);
-                        }
-                    }
                     doc.Save(Path.Combine(updatedPath, RegularizeUid(Path.GetFileNameWithoutExtension(p)) + Path.GetExtension(p)));
                     return Task.FromResult(1);
                 });
@@ -68,11 +60,6 @@
                 uid = m.Groups[2].Value;
             }
             return uid.Replace(Constants.IdSpliter, Constants.Dot);
-        }
-
-        private static string RegularizeName(string name)
-        {
-            return name.Replace(Constants.NameSpliter, Constants.Dot);
         }
     }
 }
