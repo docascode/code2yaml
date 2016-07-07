@@ -50,6 +50,15 @@
                 new YamlSerializer().Serialize(writer, tocYaml);
             }
 
+            string tocMDFile = Path.Combine(outputPath, Constants.TocMDFileName);
+            using (var writer = new StreamWriter(tocMDFile))
+            {
+                foreach (var item in tocYaml)
+                {
+                    WriteTocItemMD(writer, item, 1);
+                }
+            }
+
             return Task.FromResult(1);
         }
 
@@ -67,6 +76,18 @@
                 orderby toc.Name.ToLower()
                 select toc) : null,
             };
+        }
+
+        private void WriteTocItemMD(StreamWriter writer, TocItemYaml item, int depth)
+        {
+            writer.WriteLine($"{new string('#', depth)} [{item.Name}]({item.Href})");
+            if (item.Items != null)
+            {
+                foreach (var c in item.Items)
+                {
+                    WriteTocItemMD(writer, c, depth + 1);
+                }
+            }
         }
     }
 }

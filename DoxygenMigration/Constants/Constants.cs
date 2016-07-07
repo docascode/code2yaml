@@ -6,6 +6,7 @@
         public const string OutputPath = "output_path";
         public const string IndexFileName = "index.xml";
         public const string TocYamlFileName = "toc.yml";
+        public const string TocMDFileName = "index.md";
         public const string Changes = "changes";
         public const string CurrentChange = "cur_change";
         public const string ParentChange = "parent_change";
