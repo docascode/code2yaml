@@ -1,5 +1,6 @@
 ﻿namespace Microsoft.Content.Build.DoxygenMigration.ArticleGenerator
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -48,6 +49,19 @@
             get
             {
                 return false;
+            }
+        }
+
+        protected override IEnumerable<string> GetDefaultInheritance(ArticleItemYaml yaml)
+        {
+            if (yaml.Type == MemberType.Enum)
+            {
+                yield return $"java.lang.Enum<{yaml.Name}>";
+            }
+
+            if (yaml.Type == MemberType.Class || yaml.Type == MemberType.Enum)
+            {
+                yield return "java.lang.Object";
             }
         }
     }

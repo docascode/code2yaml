@@ -48,5 +48,13 @@
                 return true;
             }
         }
+
+        protected override IEnumerable<string> GetDefaultInheritance(ArticleItemYaml yaml)
+        {
+            if (yaml.Type == MemberType.Class)
+            {
+                yield return "System::Object";
+            }
+        }
     }
 }

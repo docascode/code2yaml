@@ -34,6 +34,8 @@
         protected abstract void FillLanguageSpecificMetadata(ArticleItemYaml yaml, ArticleContext context, XElement node);
 
         protected abstract ReferenceViewModel CreateReferenceWithSpec(string uid, List<SpecViewModel> specs);
+
+        protected abstract IEnumerable<string> GetDefaultInheritance(ArticleItemYaml yaml);
         #endregion
 
         public Task<PageModel> GenerateArticleAsync(ArticleContext context, XDocument document)
@@ -79,7 +81,7 @@
                         memberYaml.FullName = _nameGenerator.GenerateMemberFullName(nameContext, member);
                         memberYaml.Name = _nameGenerator.GenerateMemberName(nameContext, member);
                         memberYaml.Href = mainYaml.Href;
-                        memberYaml.Type = tuple.Item1.Value;
+                        memberYaml.Type = string.IsNullOrEmpty(member.NullableElement("type").NullableValue()) ? MemberType.Constructor : tuple.Item1.Value;
                         memberYaml.Parent = mainYaml.Uid;
                         FillSummary(memberYaml, member);
                         FillSource(memberYaml, member, context.GitRepo, context.GitBranch);
@@ -175,7 +177,7 @@
         protected void FillReturn(SyntaxDetailViewModel syntax, XElement node)
         {
             string typeStr = node.NullableElement("type").NullableValue();
-            if (typeStr != null && (!typeStr.Equals("void", StringComparison.OrdinalIgnoreCase)))
+            if (!string.IsNullOrEmpty(typeStr) && (!typeStr.Equals("void", StringComparison.OrdinalIgnoreCase)))
             {
                 syntax.Return = new ApiParameter
                 {
@@ -278,15 +280,16 @@
             //yaml.Inheritance = idHash.ToDictionary(pair => nodeIdHash[pair.Key], pair => pair.Value.Select(n => nodeIdHash[n]).ToList());
             // var dict = idHash.ToDictionary(pair => nodeIdHash[pair.Key], pair => pair.Value.Select(n => nodeIdHash[n]).ToList());
             var dict = idHash.GroupBy(pair => nodeIdHash[pair.Key]).ToDictionary(g => g.Key, g => g.SelectMany(p => p.Value).Select(n => nodeIdHash[n]).ToList());
-            yaml.Inheritance = new List<string>();
+            yaml.Inheritance = new List<string>();            
             string start = yaml.Uid;
             while (dict.ContainsKey(start))
             {
                 start = dict[start].Single();
                 yaml.Inheritance.Add(start);
             }
+            var defaultInheritance = GetDefaultInheritance(yaml);
+            yaml.Inheritance.AddRange(defaultInheritance);
             yaml.Inheritance.Reverse();
-
         }
 
         protected void FillInheritedMembers(ArticleItemYaml yaml, XElement node)

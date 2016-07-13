@@ -13,6 +13,7 @@
         Method,//MemberFunction
         //Friend,
         Interface,
+        Constructor,
     }
 
     [Flags]
