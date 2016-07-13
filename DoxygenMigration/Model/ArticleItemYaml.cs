@@ -90,6 +90,6 @@
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [YamlIgnore]
-        public List<string> ImplementsOrInherits { get; set; } = new List<string>();
+        public List<SpecializedType> ImplementsOrInherits { get; set; } = new List<SpecializedType>();
     }
 }

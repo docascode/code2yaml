@@ -65,6 +65,6 @@
                 builder.Append(">");
             }
             return builder.ToString();
-        } 
+        }
     }
 }

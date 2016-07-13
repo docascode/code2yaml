@@ -271,6 +271,11 @@
 
         protected void FillInheritance(NameGeneratorContext context, ArticleItemYaml yaml, XElement node)
         {
+            if (yaml.Type == MemberType.Interface)
+            {
+                return;
+            }
+
             var nodeIdHash = new Dictionary<string, string>();
             var idHash = new Dictionary<string, List<string>>();
             var inheritanceGraph = node.NullableElement("inheritancegraph");
@@ -336,9 +341,10 @@
             foreach (var basenode in node.Elements("basecompoundref"))
             {
                 string refId = basenode.NullableAttribute("refid").NullableValue();
+                string specializedFullName = YamlUtility.RegularizeName(basenode.NullableValue(), Constants.Dot);
                 if (refId != null)
                 {
-                    yaml.ImplementsOrInherits.Add(refId);
+                    yaml.ImplementsOrInherits.Add(new SpecializedType { Type = refId, SpecializedFullName = specializedFullName });
                 }
             }
         }

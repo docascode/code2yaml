@@ -75,6 +75,7 @@
     <Compile Include="Model\PageModel.cs" />
     <Compile Include="Model\ReferenceViewModel.cs" />
     <Compile Include="Model\SourceDetail.cs" />
+    <Compile Include="Model\SpecializedType.cs" />
     <Compile Include="Model\SpecViewModel.cs" />
     <Compile Include="Model\SyntaxDetailViewModel.cs" />
     <Compile Include="Model\TocItemYaml.cs" />

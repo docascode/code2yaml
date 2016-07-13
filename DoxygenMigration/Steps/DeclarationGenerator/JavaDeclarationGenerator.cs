@@ -112,15 +112,17 @@
             foreach (var ele in yaml.ImplementsOrInherits)
             {
                 ArticleItemYaml eleYaml;
-                if (articleDict.TryGetValue(ele, out eleYaml))
+                if (articleDict.TryGetValue(ele.Type, out eleYaml))
                 {
+                    string parent = eleYaml.Parent != null ? articleDict[eleYaml.Parent].FullName : string.Empty;
+                    string name = YamlUtility.ParseNameFromFullName(Hierarchy.HierarchyType.Class, parent, ele.SpecializedFullName, Constants.Dot);
                     if (yaml.Type != MemberType.Interface && eleYaml.Type == MemberType.Interface)
                     {
-                        implements.Add(eleYaml.Name);
+                        implements.Add(name);
                     }
                     else
                     {
-                        extends.Add(eleYaml.Name);
+                        extends.Add(name);
                     }
                 }
             }
