@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
 
     using YamlDotNet.Serialization;
 
@@ -86,5 +87,9 @@
 
         [YamlMember(Alias = "conceptual")]
         public string Conceptual { get; set; }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [YamlIgnore]
+        public List<string> ImplementsOrInherits { get; set; } = new List<string>();
     }
 }

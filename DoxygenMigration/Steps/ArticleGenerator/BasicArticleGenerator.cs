@@ -7,12 +7,13 @@
     using System.Xml.Linq;
     using System.Xml.XPath;
 
-    using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
+    using Microsoft.Content.Build.DoxygenMigration.Constants;
     using Microsoft.Content.Build.DoxygenMigration.DeclarationGenerator;
+    using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
     using Microsoft.Content.Build.DoxygenMigration.Model;
     using Microsoft.Content.Build.DoxygenMigration.NameGenerator;
     using Microsoft.Content.Build.DoxygenMigration.Steps;
-    using Microsoft.Content.Build.DoxygenMigration.Utility; 
+    using Microsoft.Content.Build.DoxygenMigration.Utility;
 
     public abstract class BasicArticleGenerator : IArticleGenerator
     {
@@ -63,6 +64,7 @@
             FillException(mainYaml, main);
             FillInheritance(nameContext, mainYaml, main);
             FillSyntax(mainYaml, main, isMain: true);
+            FillImplementsOrInherits(mainYaml, main);
             FillLanguageSpecificMetadata(mainYaml, context, main);
 
             var members = new Dictionary<string, ArticleItemYaml>();
@@ -120,6 +122,17 @@
 
             EmptyToNull(mainYaml);
             return Task.FromResult(page);
+        }
+
+        public Task PostGenerateArticleAsync(BuildContext context, PageModel page)
+        {
+            var mainItem = page.Items[0];
+            var infoDict = (IReadOnlyDictionary<string, ArticleItemYaml>)context.GetSharedObject(Constants.ArticleItemYamlDict);
+            if (mainItem.ImplementsOrInherits != null && mainItem.ImplementsOrInherits.Count > 0)
+            {
+                mainItem.Syntax.Content += _declarationGenerator.GenerateInheritImplementString(infoDict, mainItem);
+            }
+            return Task.FromResult(1);
         }
 
         protected void FillSummary(ArticleItemYaml yaml, XElement node)
@@ -280,7 +293,7 @@
             //yaml.Inheritance = idHash.ToDictionary(pair => nodeIdHash[pair.Key], pair => pair.Value.Select(n => nodeIdHash[n]).ToList());
             // var dict = idHash.ToDictionary(pair => nodeIdHash[pair.Key], pair => pair.Value.Select(n => nodeIdHash[n]).ToList());
             var dict = idHash.GroupBy(pair => nodeIdHash[pair.Key]).ToDictionary(g => g.Key, g => g.SelectMany(p => p.Value).Select(n => nodeIdHash[n]).ToList());
-            yaml.Inheritance = new List<string>();            
+            yaml.Inheritance = new List<string>();
             string start = yaml.Uid;
             while (dict.ContainsKey(start))
             {
@@ -316,6 +329,18 @@
             _references.AddRange(referenceIds.Select(refid => new ReferenceViewModel { Uid = refid }));
 
             page.References = _references.Distinct(new ReferenceEqualComparer()).ToList();
+        }
+
+        protected void FillImplementsOrInherits(ArticleItemYaml yaml, XElement node)
+        {
+            foreach (var basenode in node.Elements("basecompoundref"))
+            {
+                string refId = basenode.NullableAttribute("refid").NullableValue();
+                if (refId != null)
+                {
+                    yaml.ImplementsOrInherits.Add(refId);
+                }
+            }
         }
 
         private string ParseParameterDescription(XElement detailedDescription, string name)

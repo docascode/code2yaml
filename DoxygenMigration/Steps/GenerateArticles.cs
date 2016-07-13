@@ -49,6 +49,7 @@
             }
 
             var infoDict = new ConcurrentDictionary<string, ArticleItemYaml>();
+            context.SetSharedObject(Constants.ArticleItemYamlDict, infoDict);
             var pages = await changesDict.Values.SelectInParallelAsync(
                async change =>
                {
@@ -79,10 +80,14 @@
                    }
                });
 
-            // update reference and save yaml
+            // update type declaration/reference and save yaml
             await pages.ForEachInParallelAsync(
-                page =>
+                async page =>
                 {
+                    // update declaration
+                    await Generator.PostGenerateArticleAsync(context, page);
+
+                    // update reference
                     foreach (var reference in page.References)
                     {
                         ArticleItemYaml yaml;
@@ -114,7 +119,6 @@
                     {
                         YamlSerializer.Value.Serialize(writer, page);
                     }
-                    return Task.FromResult(1);
                 });
         }
     }

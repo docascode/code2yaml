@@ -1,5 +1,6 @@
 ﻿namespace Microsoft.Content.Build.DoxygenMigration.DeclarationGenerator
 {
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Runtime.CompilerServices;
@@ -8,6 +9,7 @@
     using System.Xml.XPath;
 
     using Microsoft.Content.Build.DoxygenMigration.Constants;
+    using Microsoft.Content.Build.DoxygenMigration.Model;
     using Microsoft.Content.Build.DoxygenMigration.Steps;
     using Microsoft.Content.Build.DoxygenMigration.Utility;
 
@@ -97,6 +99,51 @@
             }
 
             return sb.ToString();
+        }
+
+        public override string GenerateInheritImplementString(IReadOnlyDictionary<string, ArticleItemYaml> articleDict, ArticleItemYaml yaml)
+        {
+            if (yaml.ImplementsOrInherits == null || yaml.ImplementsOrInherits.Count == 0)
+            {
+                return string.Empty;
+            }
+            List<string> implements = new List<string>();
+            List<string> extends = new List<string>();
+            foreach (var ele in yaml.ImplementsOrInherits)
+            {
+                ArticleItemYaml eleYaml;
+                if (articleDict.TryGetValue(ele, out eleYaml))
+                {
+                    if (yaml.Type != MemberType.Interface && eleYaml.Type == MemberType.Interface)
+                    {
+                        implements.Add(eleYaml.Name);
+                    }
+                    else
+                    {
+                        extends.Add(eleYaml.Name);
+                    }
+                }
+            }
+
+            var builder = new StringBuilder();
+            if (extends.Count > 0)
+            {
+                builder.Append($" extends {extends[0]}");
+                foreach (var ex in extends.Skip(1))
+                {
+                    builder.Append($",{ex}");
+                }
+            }
+            if (implements.Count > 0)
+            {
+                builder.Append($" implements {implements[0]}");
+                foreach (var im in implements.Skip(1))
+                {
+                    builder.Append($",{im}");
+                }
+            }
+
+            return builder.ToString();
         }
 
         private string ParseTypeParameterString(XElement paramElement, StrongBox<int> count)

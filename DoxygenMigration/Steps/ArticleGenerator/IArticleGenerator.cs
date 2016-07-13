@@ -10,5 +10,7 @@
     public interface IArticleGenerator : ICloneable
     {
         Task<PageModel> GenerateArticleAsync(ArticleContext context, XDocument document);
+
+        Task PostGenerateArticleAsync(BuildContext context, PageModel page);
     }
 }

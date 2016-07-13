@@ -1,11 +1,7 @@
 ﻿namespace Microsoft.Content.Build.DoxygenMigration.ArticleGenerator
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Xml.Linq;
-    using System.Xml.XPath;
 
     using Microsoft.Content.Build.DoxygenMigration.Constants;
     using Microsoft.Content.Build.DoxygenMigration.DeclarationGenerator;

@@ -13,6 +13,7 @@
         public const string GitRepo = "git_repo";
         public const string GitBranch = "git_branch";
         public const string Language = "language";
+        public const string ArticleItemYamlDict = "article_item_yaml_dict";
         public const string XmlExtension = ".xml";
         public const string YamlExtension = ".yml";
         public const string IdSpliter = "_1_1";
