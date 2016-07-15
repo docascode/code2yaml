@@ -8,11 +8,11 @@
 
     public abstract class INameGenerator
     {
-        public abstract string GenerateTypeFullName(NameGeneratorContext context, XElement node);
+        public abstract string GenerateTypeFullName(NameGeneratorContext context, XElement node, bool withTypeParameters);
 
         public abstract string GenerateMemberFullName(NameGeneratorContext context, XElement node);
 
-        public abstract string GenerateTypeName(NameGeneratorContext context, XElement node);
+        public abstract string GenerateTypeName(NameGeneratorContext context, XElement node, bool withTypeParameters);
 
         public abstract string GenerateMemberName(NameGeneratorContext context, XElement node);
 

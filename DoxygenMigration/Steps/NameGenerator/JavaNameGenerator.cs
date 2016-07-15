@@ -11,20 +11,20 @@
 
     public class JavaNameGenerator : INameGenerator
     {
-        public override string GenerateTypeFullName(NameGeneratorContext context, XElement node)
+        public override string GenerateTypeFullName(NameGeneratorContext context, XElement node, bool withTypeParameters)
         {
             string fullname = YamlUtility.RegularizeName(context.CurrentChange.Name, Constants.Dot);
-            if (node != null)
+            if (node != null && withTypeParameters)
             {
                 fullname += GetTypeParameterString(node);
             }
             return fullname;
         }
 
-        public override string GenerateTypeName(NameGeneratorContext context, XElement node)
+        public override string GenerateTypeName(NameGeneratorContext context, XElement node, bool withTypeParameters)
         {
             string name = YamlUtility.RegularizeName(YamlUtility.ParseNameFromFullName(context.CurrentChange.Type, context.ParentChange?.Name, context.CurrentChange.Name), Constants.Dot);
-            if (node != null)
+            if (node != null && withTypeParameters)
             {
                 name += GetTypeParameterString(node);
             }

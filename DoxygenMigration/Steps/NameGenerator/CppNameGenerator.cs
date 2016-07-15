@@ -9,12 +9,12 @@
 
     public class CppNameGenerator : INameGenerator
     {
-        public override string GenerateTypeFullName(NameGeneratorContext context, XElement node)
+        public override string GenerateTypeFullName(NameGeneratorContext context, XElement node, bool withTypeParameters)
         {
             return context.CurrentChange.Name;
         }
 
-        public override string GenerateTypeName(NameGeneratorContext context, XElement node)
+        public override string GenerateTypeName(NameGeneratorContext context, XElement node, bool withTypeParameters)
         {
             return YamlUtility.ParseNameFromFullName(context.CurrentChange.Type, context.ParentChange?.Name, context.CurrentChange.Name);
         }

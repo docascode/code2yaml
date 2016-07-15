@@ -68,7 +68,7 @@
             return new TocItemYaml
             {
                 Uid = change.Uid,
-                Name = NameGenerator.GenerateTypeName(new NameGeneratorContext { CurrentChange = change, ParentChange = parentChange }, null),
+                Name = NameGenerator.GenerateTypeName(new NameGeneratorContext { CurrentChange = change, ParentChange = parentChange }, null, true),
                 Href = YamlUtility.ParseHrefFromChangeFile(change.File),
                 Items = change.Children.Any() ? new TocYaml(
                 from child in change.Children

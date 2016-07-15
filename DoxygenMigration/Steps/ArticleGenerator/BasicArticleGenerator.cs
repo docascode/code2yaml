@@ -52,8 +52,10 @@
             mainYaml.Uid = curChange.Uid;
             mainYaml.Id = _nameGenerator.GenerateId(nameContext, main);
             mainYaml.SupportedLanguages = new string[] { Language };
-            mainYaml.FullName = _nameGenerator.GenerateTypeFullName(nameContext, main);
-            mainYaml.Name = _nameGenerator.GenerateTypeName(nameContext, main);
+            mainYaml.FullName = _nameGenerator.GenerateTypeFullName(nameContext, main, true);
+            mainYaml.Name = _nameGenerator.GenerateTypeName(nameContext, main, true);
+            mainYaml.FullNameWithoutTypeParameter = _nameGenerator.GenerateTypeFullName(nameContext, main, false);
+            mainYaml.NameWithoutTypeParameter = _nameGenerator.GenerateTypeName(nameContext, main, false);
             mainYaml.Href = YamlUtility.ParseHrefFromChangeFile(curChange.File);
             mainYaml.Type = YamlUtility.ParseType(curChange.Type.ToString());
             mainYaml.Parent = curChange.Parent;

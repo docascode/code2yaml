@@ -108,8 +108,8 @@
                                 if (spec.Uid != null)
                                 {
                                     var specYaml = infoDict[spec.Uid];
-                                    spec.Name = specYaml.Name;
-                                    spec.FullName = specYaml.FullName;
+                                    spec.Name = specYaml.NameWithoutTypeParameter ?? specYaml.Name;
+                                    spec.FullName = specYaml.FullNameWithoutTypeParameter ?? specYaml.FullName;
                                     spec.Href = specYaml.Href;
                                 }
                             }
