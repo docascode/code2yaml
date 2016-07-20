@@ -26,5 +26,6 @@
         Static = 8,
         Virtual = 16,
         Package = 32,
+        NotAccessible = Private | Package,
     }
 }

@@ -74,7 +74,7 @@
             {
                 string kind = section.NullableAttribute("kind").NullableValue();
                 var tuple = KindMapToType(kind);
-                if (tuple.Item1.HasValue && ((tuple.Item2 & AccessLevel.Private) == AccessLevel.None))
+                if (tuple.Item1.HasValue && ((tuple.Item2 & AccessLevel.NotAccessible) == AccessLevel.None))
                 {
                     foreach (var member in section.Elements("memberdef"))
                     {
