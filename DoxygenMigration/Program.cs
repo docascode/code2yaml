@@ -47,7 +47,7 @@
             {
                 // do nothing
             }
-            Console.WriteLine(string.Join(Environment.NewLine, context.Logs.Select(l => l.Message)));
+            Console.WriteLine(string.Join(Environment.NewLine, context.Logs.Select(l => GetFormattedLog(l))));
         }
 
         private static bool ValidateArgs(string[] args)
@@ -74,6 +74,11 @@
                 value = value.Substring(cmdPrefix.Length).Trim();
             }
             return value;
+        }
+
+        private static string GetFormattedLog(LogEntry log)
+        {
+            return string.Join("\t", log.Level, log.Message, log.Data);
         }
     }
 }
