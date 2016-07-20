@@ -24,5 +24,6 @@
         public const string CmdArgGitBranch = "gitbranch:";
         public const string CmdArgLanguage = "lang:";
         public const string Dot = ".";
+        public const string GenerateTocMDFile = "generate_toc_md";
     }
 }

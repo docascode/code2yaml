@@ -29,6 +29,7 @@
             context.SetSharedObject(Constants.Constants.GitRepo, _gitRepo);
             context.SetSharedObject(Constants.Constants.GitBranch, _gitBranch);
             context.SetSharedObject(Constants.Constants.Language, _lang);
+            context.SetSharedObject(Constants.Constants.GenerateTocMDFile, false);
             var procedure = new StepCollection(
                 new PreprocessXml(),
                 new ScanHierarchy(),

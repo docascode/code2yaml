@@ -53,9 +53,13 @@
             string tocMDFile = Path.Combine(outputPath, Constants.TocMDFileName);
             using (var writer = new StreamWriter(tocMDFile))
             {
-                foreach (var item in tocYaml)
+                bool generateTocMDFile = (bool)context.GetSharedObject(Constants.GenerateTocMDFile);
+                if (generateTocMDFile)
                 {
-                    WriteTocItemMD(writer, item, 1);
+                    foreach (var item in tocYaml)
+                    {
+                        WriteTocItemMD(writer, item, 1);
+                    }
                 }
             }
 
