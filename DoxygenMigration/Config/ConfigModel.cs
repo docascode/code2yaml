@@ -9,12 +9,6 @@
     [Serializable]
     public class ConfigModel
     {
-        [JsonProperty(Constants.GitBranch, Required= Required.DisallowNull)]
-        public string GitBranch { get; set; }
-
-        [JsonProperty(Constants.GitRepo, Required = Required.DisallowNull)]
-        public string GitRepo { get; set; }
-
         [JsonProperty(Constants.InputPath, Required = Required.DisallowNull)]
         public string InputPath { get; set; }
 

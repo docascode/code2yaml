@@ -49,7 +49,7 @@
         {
             get
             {
-                return Config.GitRepo;
+                return (string)Context.GetSharedObject(Constants.GitRepo);
             }
         }
 
@@ -57,7 +57,7 @@
         {
             get
             {
-                return Config.GitBranch;
+                return (string)Context.GetSharedObject(Constants.GitBranch);
             }
         }
 
