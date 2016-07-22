@@ -9,6 +9,7 @@
     using System.Xml.Linq;
 
     using Microsoft.Content.Build.DoxygenMigration.ArticleGenerator;
+    using Microsoft.Content.Build.DoxygenMigration.Common;
     using Microsoft.Content.Build.DoxygenMigration.Config;
     using Microsoft.Content.Build.DoxygenMigration.Constants;
     using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
@@ -66,9 +67,10 @@
                        {
                            if (!infoDict.TryAdd(item.Uid, item))
                            {
-                               context.AddLogEntry(
+                               ConsoleLogger.WriteLine(
                                    new LogEntry
                                    {
+                                       Phase = StepName,
                                        Level = LogLevel.Warning,
                                        Message = $"Duplicate items {item.Uid} found in {change.File}.",
                                    });

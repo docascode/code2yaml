@@ -1,4 +1,4 @@
-﻿namespace Microsoft.Content.Build.DoxygenMigration.Config
+﻿namespace Microsoft.Content.Build.DoxygenMigration.Doxyfile
 {
     using System;
     using System.Collections;

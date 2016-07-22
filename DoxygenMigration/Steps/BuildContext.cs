@@ -9,15 +9,6 @@
     public class BuildContext
     {
         private ConcurrentDictionary<string, object> _sharedObjects = new ConcurrentDictionary<string, object>();
-        private List<LogEntry> _logEntries = new List<LogEntry>();
-
-        public IReadOnlyList<LogEntry> Logs
-        {
-            get
-            {
-                return this._logEntries;
-            }
-        }
 
         #region Shared object
         public object GetSharedObject(string name)
@@ -68,17 +59,6 @@
             }
 
             this._sharedObjects[name] = item;
-        }
-        #endregion
-
-        #region Log entry
-        public void AddLogEntry(LogEntry entry)
-        {
-            // add to list of log entry
-            lock (this._logEntries)
-            {
-                this._logEntries.Add(entry);
-            }
         }
         #endregion
 

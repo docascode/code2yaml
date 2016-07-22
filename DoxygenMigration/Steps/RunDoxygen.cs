@@ -8,8 +8,10 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+    using Microsoft.Content.Build.DoxygenMigration.Common;
     using Microsoft.Content.Build.DoxygenMigration.Config;
     using Microsoft.Content.Build.DoxygenMigration.Constants;
+    using Microsoft.Content.Build.DoxygenMigration.Doxyfile;
     using Microsoft.Content.Build.DoxygenMigration.Utility;
 
     public class RunDoxygen : IStep
@@ -59,27 +61,29 @@
                         {
                             if (doxygenProcess.ExitCode != 0)
                             {
-                                context.AddLogEntry(
+                                ConsoleLogger.WriteLine(
                                     new LogEntry
                                     {
+                                        Phase = StepName,
                                         Level = LogLevel.Error,
                                         Message = $"Run Doxygen failed with exit code {doxygenProcess.ExitCode}. Error message: {errorBuilder.ToString()}.",
                                         Data = $"DoxyFile: {File.ReadAllText(doxyFile)}",
                                     });
-                                return;
+                                throw new ApplicationException("RunDoxygen step failed");
                             }
                         }
                         else
                         {
                             doxygenProcess.Kill();
-                            context.AddLogEntry(
+                            ConsoleLogger.WriteLine(
                                 new LogEntry
                                 {
+                                    Phase = StepName,
                                     Level = LogLevel.Error,
                                     Message = $"Run Doxygen timeout in {TimeoutInMilliseconds} milliseconds.",
                                     Data = $"DoxyFile: {File.ReadAllText(doxyFile)}",
                                 });
-                            return;
+                            throw new TimeoutException("RunDoxygen timed out");
                         }
                     }
                 }
@@ -94,6 +98,10 @@
         {
             ConfigModel config = context.GetSharedObject(Constants.Config) as ConfigModel;
             string intermediateFolder = StepUtility.GetIntermediateOutputPath(config.OutputPath);
+            if (Directory.Exists(intermediateFolder))
+            {
+                Directory.Delete(intermediateFolder, recursive: true);
+            }
             Directory.CreateDirectory(intermediateFolder);
             string doxyfile = Path.Combine(intermediateFolder, "Doxyfile");
             using (var sw = new StreamWriter(doxyfile))

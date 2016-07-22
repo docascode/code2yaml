@@ -1,7 +1,9 @@
-﻿namespace Microsoft.Content.Build.DoxygenMigration.Steps
+﻿namespace Microsoft.Content.Build.DoxygenMigration.Common
 {
     public class LogEntry
     {
+        public string Phase { get; set; }
+
         public LogLevel Level { get; set; }
 
         public string Message { get; set; }
@@ -14,5 +16,6 @@
         Error,
         Warning,
         Info,
+        Verbose,
     }
 }

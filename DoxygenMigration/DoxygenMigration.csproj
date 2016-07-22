@@ -87,10 +87,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\ConsoleLogger.cs" />
+    <Compile Include="Common\LogEntry.cs" />
     <Compile Include="Common\XHtmlWriter.cs" />
     <Compile Include="Config\ConfigModel.cs" />
-    <Compile Include="Config\DoxyfileParser.cs" />
-    <Compile Include="Config\DoxyfileWriter.cs" />
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="Hierarchy\HierarchyChange.cs" />
     <Compile Include="Hierarchy\HierarchyType.cs" />
@@ -118,10 +118,11 @@
     <Compile Include="Steps\DeclarationGenerator\CppDeclarationGenerator.cs" />
     <Compile Include="Steps\DeclarationGenerator\DeclarationGenerator.cs" />
     <Compile Include="Steps\DeclarationGenerator\JavaDeclarationGenerator.cs" />
+    <Compile Include="Steps\Doxyfile\DoxyfileParser.cs" />
+    <Compile Include="Steps\Doxyfile\DoxyfileWriter.cs" />
     <Compile Include="Steps\GenerateArticles.cs" />
     <Compile Include="Steps\GenerateToc.cs" />
     <Compile Include="Steps\IStep.cs" />
-    <Compile Include="Steps\LogEntry.cs" />
     <Compile Include="Steps\NameGenerator\CppNameGenerator.cs" />
     <Compile Include="Steps\NameGenerator\JavaNameGenerator.cs" />
     <Compile Include="Steps\NameGenerator\NameGenerator.cs" />

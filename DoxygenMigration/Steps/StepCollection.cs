@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
+    using Microsoft.Content.Build.DoxygenMigration.Common;
+
     public class StepCollection : IStep
     {
         public string StepName
@@ -33,15 +35,17 @@
             {
                 try
                 {
+                    ConsoleLogger.WriteLine(new LogEntry { Phase = step.StepName, Level = LogLevel.Info, Message = "Start ..." });
                     await step.RunAsync(context);
                 }
                 catch (Exception ex)
                 {
-                    context.AddLogEntry(
+                    ConsoleLogger.WriteLine(
                         new LogEntry
                         {
+                            Phase = step.StepName,
                             Level = LogLevel.Error,
-                            Message = string.Format("Step {0} failed. Error message: {1}.", step.StepName, ex.Message),
+                            Message = ex.Message,
                             Data = ex,
                         });
                     // rethrow exception

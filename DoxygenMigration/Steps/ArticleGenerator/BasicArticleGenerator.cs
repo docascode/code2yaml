@@ -8,6 +8,7 @@
     using System.Xml.Linq;
     using System.Xml.XPath;
 
+    using Microsoft.Content.Build.DoxygenMigration.Common;
     using Microsoft.Content.Build.DoxygenMigration.Constants;
     using Microsoft.Content.Build.DoxygenMigration.DeclarationGenerator;
     using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
@@ -98,9 +99,10 @@
 
                         if (members.ContainsKey(memberYaml.Uid))
                         {
-                            context.Context.AddLogEntry(
+                            ConsoleLogger.WriteLine(
                                 new LogEntry
                                 {
+                                    Phase = nameof(GenerateArticles),
                                     Level = LogLevel.Warning,
                                     Message = $"Duplicate items {memberYaml.Uid} found in {curChange.File}.",
                                 });

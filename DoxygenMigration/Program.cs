@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using Microsoft.Content.Build.DoxygenMigration.ArticleGenerator;
@@ -38,15 +39,22 @@
                         new GenerateToc { NameGenerator = NameGeneratorFactory.Create(_config.Language) },
                         new GenerateArticles { Generator = ArticleGeneratorFactory.Create(_config.Language) },
                     }));
+            string status = "Failed";
+            var watch = Stopwatch.StartNew();
             try
             {
                 procedure.RunAsync(context).Wait();
+                status = "Succeeded";
             }
             catch
             {
                 // do nothing
             }
-            Console.WriteLine(string.Join(Environment.NewLine, context.Logs.Select(l => GetFormattedLog(l))));
+            finally
+            {
+                watch.Stop();
+            }
+            Console.WriteLine($"{status} in {watch.ElapsedMilliseconds} milliseconds.");
         }
 
         private static bool ValidateConfig(string[] args)
@@ -72,12 +80,8 @@
                 Console.Error.WriteLine($"Fail to deserialize config file: {configPath}. Exception: {ex}");
                 return false;
             }
+            Console.WriteLine($"Config file {configPath} found. Start processing...");
             return true;
-        }
-
-        private static string GetFormattedLog(LogEntry log)
-        {
-            return string.Join("\t", log.Level, log.Message, log.Data);
         }
     }
 }
