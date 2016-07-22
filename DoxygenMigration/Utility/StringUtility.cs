@@ -1,6 +1,7 @@
 ﻿namespace Microsoft.Content.Build.DoxygenMigration.Utility
 {
     using System;
+    using System.IO;
     using System.Security.Cryptography;
     using System.Text;
 
@@ -32,6 +33,18 @@
             var output = new Guid(outputBuf).ToString();
             int hashTokenLength = output.Length > 8 ? 8 : output.Length;
             return output.Substring(0, hashTokenLength);
+        }
+
+        public static string BackSlashToForwardSlash(this string input)
+        {
+            if (string.IsNullOrEmpty(input)) return null;
+            return input.Replace('\\', '/');
+        }
+
+        public static string ToNormalizedFullPath(this string path)
+        {
+            if (string.IsNullOrEmpty(path)) return null;
+            return Path.GetFullPath(path).BackSlashToForwardSlash().TrimEnd('/');
         }
     }
 }

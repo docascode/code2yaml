@@ -48,6 +48,10 @@
       <HintPath>..\packages\Microsoft.DocAsCode.YamlSerialization.1.3.0-alpha-98-g3ddcafb\lib\net45\Microsoft.DocAsCode.YamlSerialization.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -64,6 +68,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\XHtmlWriter.cs" />
+    <Compile Include="Config\ConfigModel.cs" />
+    <Compile Include="Config\DoxyfileParser.cs" />
+    <Compile Include="Config\DoxyfileWriter.cs" />
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="Hierarchy\HierarchyChange.cs" />
     <Compile Include="Hierarchy\HierarchyType.cs" />
@@ -100,11 +107,14 @@
     <Compile Include="Steps\NameGenerator\NameGenerator.cs" />
     <Compile Include="Steps\NameGenerator\NameGeneratorContext.cs" />
     <Compile Include="Steps\PreprocessXml.cs" />
+    <Compile Include="Steps\RunDoxygen.cs" />
     <Compile Include="Steps\ScanHierarchy.cs" />
     <Compile Include="Steps\StepCollection.cs" />
     <Compile Include="Steps\TaskParallel.cs" />
     <Compile Include="Steps\TripleSlashCommentTransformer.cs" />
     <Compile Include="Steps\XContainerExtension.cs" />
+    <Compile Include="Utility\PathUtility.cs" />
+    <Compile Include="Utility\StepUtility.cs" />
     <Compile Include="Utility\StringUtility.cs" />
     <Compile Include="Utility\TaskUtility.cs" />
     <Compile Include="Utility\TypeUtility.cs" />
@@ -113,9 +123,17 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="Tools\DoxyfileTemplate" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Steps\TripleSlashCommentTransform.xsl" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Tools\doxygen.exe">
+      <LogicalName>$(AssemblyName).Tools.doxygen.exe</LogicalName>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

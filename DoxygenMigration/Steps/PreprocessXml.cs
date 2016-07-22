@@ -9,6 +9,7 @@
     using System.Xml.Linq;
     using System.Xml.XPath;
 
+    using Microsoft.Content.Build.DoxygenMigration.Config;
     using Microsoft.Content.Build.DoxygenMigration.Constants;
     using Microsoft.Content.Build.DoxygenMigration.Utility;
 
@@ -21,21 +22,19 @@
 
         public async Task RunAsync(BuildContext context)
         {
-            string inputPath = context.GetSharedObject(Constants.InputPath) as string;
-            if (inputPath == null)
+            var config = context.GetSharedObject(Constants.Config) as ConfigModel;
+            if (config == null)
             {
-                throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.InputPath));
+                throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.Config));
             }
 
-            string dirName = Path.GetDirectoryName(inputPath);
-            string updatedFolderName = Path.GetFileName(inputPath) + "_update";
-            var updatedFolderPath = Path.Combine(dirName, updatedFolderName);
-            if (Directory.Exists(updatedFolderPath))
+            string inputPath = StepUtility.GetDoxygenXmlOutputPath(config.OutputPath);
+            var processedOutputPath = StepUtility.GetProcessedXmlOutputPath(config.OutputPath);
+            if (Directory.Exists(processedOutputPath))
             {
-                Directory.Delete(updatedFolderPath, recursive: true);
+                Directory.Delete(processedOutputPath, recursive: true);
             }
-            var dirInfo = Directory.CreateDirectory(updatedFolderPath);
-            string updatedPath = dirInfo.FullName;
+            var dirInfo = Directory.CreateDirectory(processedOutputPath);
 
             // workaround for Doxygen Bug: it generated extra namespace for code `public string namespace(){ return ""; }`.
             // so if we find namespace which has same name with class, remove it from index file and also remove its file.
@@ -120,10 +119,9 @@
                 {
                     node.Attribute("id").Value = RegularizeUid(node.Attribute("id").Value);
                 }
-                doc.Save(Path.Combine(updatedPath, RegularizeUid(Path.GetFileNameWithoutExtension(p)) + Path.GetExtension(p)));
+                doc.Save(Path.Combine(dirInfo.FullName, RegularizeUid(Path.GetFileNameWithoutExtension(p)) + Path.GetExtension(p)));
                 return Task.FromResult(1);
             });
-            context.SetSharedObject(Constants.InputPath, updatedPath);
         }
 
         private static string RegularizeUid(string uid)

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Xml.Linq;
@@ -61,7 +62,7 @@
             mainYaml.Parent = curChange.Parent;
             mainYaml.Children = curChange.Children != null ? new List<string>(curChange.Children.OrderBy(c => c)) : new List<string>();
             FillSummary(mainYaml, main);
-            FillSource(mainYaml, main, context.GitRepo, context.GitBranch);
+            FillSource(mainYaml, main, context.GitRepo, context.GitBranch, context.BasePath);
             FillSees(mainYaml, main);
             FillException(mainYaml, main);
             FillInheritance(nameContext, mainYaml, main);
@@ -88,7 +89,7 @@
                         memberYaml.Type = string.IsNullOrEmpty(member.NullableElement("type").NullableValue()) ? MemberType.Constructor : tuple.Item1.Value;
                         memberYaml.Parent = mainYaml.Uid;
                         FillSummary(memberYaml, member);
-                        FillSource(memberYaml, member, context.GitRepo, context.GitBranch);
+                        FillSource(memberYaml, member, context.GitRepo, context.GitBranch, context.BasePath);
                         FillSees(memberYaml, member);
                         FillException(memberYaml, member);
                         FillOverridden(memberYaml, member);
@@ -242,14 +243,14 @@
             yaml.Overridden = node.NullableElement("reimplements").NullableAttribute("refid").NullableValue();
         }
 
-        protected void FillSource(ArticleItemYaml yaml, XElement node, string repo, string branch)
+        protected void FillSource(ArticleItemYaml yaml, XElement node, string repo, string branch, string basePath)
         {
             var location = node.NullableElement("location");
             if (!location.IsNull())
             {
-                string headerPath = location.NullableAttribute("file").NullableValue();
+                string headerPath = GetRelativePath(location.NullableAttribute("file").NullableValue(), basePath);
                 string headerStartlineStr = location.NullableAttribute("line").NullableValue();
-                string path = location.NullableAttribute("bodyfile").NullableValue();
+                string path = GetRelativePath(location.NullableAttribute("bodyfile").NullableValue(), basePath);
                 string startlineStr = location.NullableAttribute("bodystart").NullableValue();
                 int headerStartline = ParseStartline(headerStartlineStr);
                 int startline = ParseStartline(startlineStr);
@@ -457,6 +458,16 @@
             }
 
             return Tuple.Create(type, level);
+        }
+
+        private static string GetRelativePath(string original, string basePath)
+        {
+            if (string.IsNullOrEmpty(original))
+            {
+                return original;
+            }
+
+            return PathUtility.MakeRelativePath(Path.GetFullPath(basePath), Path.GetFullPath(original));
         }
 
         private static void EmptyToNull(ArticleItemYaml yaml)

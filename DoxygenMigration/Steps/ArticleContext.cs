@@ -1,5 +1,6 @@
 ﻿namespace Microsoft.Content.Build.DoxygenMigration.Steps
 {
+    using Microsoft.Content.Build.DoxygenMigration.Config;
     using Microsoft.Content.Build.DoxygenMigration.Constants;
     using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
 
@@ -17,6 +18,14 @@
             get
             {
                 return _context;
+            }
+        }
+
+        public ConfigModel Config
+        {
+            get
+            {
+                return (ConfigModel)Context.GetSharedObject(Constants.Config);
             }
         }
 
@@ -40,7 +49,7 @@
         {
             get
             {
-                return (string)Context.GetSharedObject(Constants.GitRepo);
+                return Config.GitRepo;
             }
         }
 
@@ -48,7 +57,15 @@
         {
             get
             {
-                return (string)Context.GetSharedObject(Constants.GitBranch);
+                return Config.GitBranch;
+            }
+        }
+
+        public string BasePath
+        {
+            get
+            {
+                return Config.InputPath;
             }
         }
     }

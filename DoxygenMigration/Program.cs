@@ -2,42 +2,36 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using Microsoft.Content.Build.DoxygenMigration.ArticleGenerator;
-    using Microsoft.Content.Build.DoxygenMigration.Constants;
+    using Microsoft.Content.Build.DoxygenMigration.Config;
     using Microsoft.Content.Build.DoxygenMigration.NameGenerator;
-    using Microsoft.Content.Build.DoxygenMigration.Steps;  
+    using Microsoft.Content.Build.DoxygenMigration.Steps;
+
+    using Newtonsoft.Json;
 
     class Program
     {
-        private static string _inputPath;
-        private static string _outputPath;
-        private static string _gitRepo;
-        private static string _gitBranch;
-        private static string _lang;
+        private static ConfigModel _config;
 
         static void Main(string[] args)
         {
-            if (!ValidateArgs(args))
+            if (!ValidateConfig(args))
             {
-                Console.WriteLine("Unrecognized parameters. Usage : DoxygenMigration.exe <input_path:input path> <output_path:output path> <git_repo: git repository> <git_branch: git branch> <lang: language>");
                 return;
             }
             var context = new BuildContext();
-            context.SetSharedObject(Constants.Constants.InputPath, _inputPath);
-            context.SetSharedObject(Constants.Constants.OutputPath, _outputPath);
-            context.SetSharedObject(Constants.Constants.GitRepo, _gitRepo);
-            context.SetSharedObject(Constants.Constants.GitBranch, _gitBranch);
-            context.SetSharedObject(Constants.Constants.Language, _lang);
-            context.SetSharedObject(Constants.Constants.GenerateTocMDFile, false);
+            context.SetSharedObject(Constants.Constants.Config, _config);
             var procedure = new StepCollection(
+                new RunDoxygen(),
                 new PreprocessXml(),
                 new ScanHierarchy(),
                 new TaskParallel(
                     new List<IStep>
                     {
-                        new GenerateToc { NameGenerator = NameGeneratorFactory.Create(_lang) },
-                        new GenerateArticles { Generator = ArticleGeneratorFactory.Create(_lang) },
+                        new GenerateToc { NameGenerator = NameGeneratorFactory.Create(_config.Language) },
+                        new GenerateArticles { Generator = ArticleGeneratorFactory.Create(_config.Language) },
                     }));
             try
             {
@@ -50,30 +44,29 @@
             Console.WriteLine(string.Join(Environment.NewLine, context.Logs.Select(l => GetFormattedLog(l))));
         }
 
-        private static bool ValidateArgs(string[] args)
+        private static bool ValidateConfig(string[] args)
         {
-            if (args.Length != 5)
+            if (args.Length > 1)
             {
+                Console.Error.WriteLine("Unrecognized parameters. Usage : DoxygenMigration.exe [code2yaml.json]");
                 return false;
             }
-
-            _inputPath = GetArgValueFromCmdLine(args, Constants.Constants.CmdArgInputPath);
-            _outputPath = GetArgValueFromCmdLine(args, Constants.Constants.CmdArgOutputPath);
-            _gitRepo = GetArgValueFromCmdLine(args, Constants.Constants.CmdArgGitRepo);
-            _gitBranch = GetArgValueFromCmdLine(args, Constants.Constants.CmdArgGitBranch);
-            _lang = GetArgValueFromCmdLine(args, Constants.Constants.CmdArgLanguage);
-
-            return !(string.IsNullOrEmpty(_inputPath) || string.IsNullOrEmpty(_outputPath) || string.IsNullOrEmpty(_gitRepo) || string.IsNullOrEmpty(_gitBranch) || string.IsNullOrEmpty(_lang));
-        }
-
-        private static string GetArgValueFromCmdLine(string[] args, string cmdPrefix)
-        {
-            string value = args.FirstOrDefault(arg => arg.ToLowerInvariant().StartsWith(cmdPrefix));
-            if (value != null)
+            string configPath = args.Length == 0 ? Constants.Constants.ConfigFileName : args[0];
+            if (!File.Exists(configPath))
             {
-                value = value.Substring(cmdPrefix.Length).Trim();
+                Console.Error.WriteLine($"Not find config file: {configPath}");
+                return false;
             }
-            return value;
+            try
+            {
+                _config = JsonConvert.DeserializeObject<ConfigModel>(File.ReadAllText(configPath));
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Fail to deserialize config file: {configPath}. Exception: {ex}");
+                return false;
+            }
+            return true;
         }
 
         private static string GetFormattedLog(LogEntry log)

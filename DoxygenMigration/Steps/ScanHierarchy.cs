@@ -7,8 +7,10 @@
     using System.Threading.Tasks;
     using System.Xml.Linq;
 
+    using Microsoft.Content.Build.DoxygenMigration.Config;
     using Microsoft.Content.Build.DoxygenMigration.Constants;
     using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
+    using Microsoft.Content.Build.DoxygenMigration.Utility;
 
     public class ScanHierarchy : IStep
     {
@@ -21,11 +23,13 @@
 
         public Task RunAsync(BuildContext context)
         {
-            string inputPath = context.GetSharedObject(Constants.InputPath) as string;
-            if (inputPath == null)
+            var config = context.GetSharedObject(Constants.Config) as ConfigModel;
+            if (config == null)
             {
-                throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.InputPath));
+                throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.Config));
             }
+
+            string inputPath = StepUtility.GetProcessedXmlOutputPath(config.OutputPath);
 
             // Parse Index file
             string indexFile = Path.Combine(inputPath, Constants.IndexFileName);

@@ -9,6 +9,7 @@
     using System.Xml.Linq;
 
     using Microsoft.Content.Build.DoxygenMigration.ArticleGenerator;
+    using Microsoft.Content.Build.DoxygenMigration.Config;
     using Microsoft.Content.Build.DoxygenMigration.Constants;
     using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
     using Microsoft.Content.Build.DoxygenMigration.Model;
@@ -32,16 +33,13 @@
 
         public async Task RunAsync(BuildContext context)
         {
-            string inputPath = context.GetSharedObject(Constants.InputPath) as string;
-            if (inputPath == null)
+            var config = context.GetSharedObject(Constants.Config) as ConfigModel;
+            if (config == null)
             {
-                throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.InputPath));
+                throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.Config));
             }
-            string outputPath = context.GetSharedObject(Constants.OutputPath) as string;
-            if (outputPath == null)
-            {
-                throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.OutputPath));
-            }
+            string inputPath = StepUtility.GetProcessedXmlOutputPath(config.OutputPath);
+            string outputPath = config.OutputPath;
             var changesDict = context.GetSharedObject(Constants.Changes) as Dictionary<string, HierarchyChange>;
             if (changesDict == null)
             {

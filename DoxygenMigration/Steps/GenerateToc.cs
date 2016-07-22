@@ -7,6 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+    using Microsoft.Content.Build.DoxygenMigration.Config;
     using Microsoft.Content.Build.DoxygenMigration.Constants;
     using Microsoft.Content.Build.DoxygenMigration.Hierarchy;
     using Microsoft.Content.Build.DoxygenMigration.Model;
@@ -26,11 +27,12 @@
 
         public Task RunAsync(BuildContext context)
         {
-            string outputPath = context.GetSharedObject(Constants.OutputPath) as string;
-            if (outputPath == null)
+            var config = context.GetSharedObject(Constants.Config) as ConfigModel;
+            if (config == null)
             {
-                throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.OutputPath));
+                throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.Config));
             }
+            string outputPath = config.OutputPath;
             var changesDict = context.GetSharedObject(Constants.Changes) as Dictionary<string, HierarchyChange>;
             if (changesDict == null)
             {
@@ -53,7 +55,7 @@
             string tocMDFile = Path.Combine(outputPath, Constants.TocMDFileName);
             using (var writer = new StreamWriter(tocMDFile))
             {
-                bool generateTocMDFile = (bool)context.GetSharedObject(Constants.GenerateTocMDFile);
+                bool generateTocMDFile = config.GenerateTocMDFile;
                 if (generateTocMDFile)
                 {
                     foreach (var item in tocYaml)
