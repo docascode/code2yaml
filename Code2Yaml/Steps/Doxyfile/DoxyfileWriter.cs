@@ -40,7 +40,10 @@
                     {
                         _inner.WriteLine($"{valueList[i]} \\");
                     }
-                    _inner.WriteLine(valueList[valueList.Count - 1]);
+                    if (valueList.Count > 0)
+                    {
+                        _inner.WriteLine(valueList[valueList.Count - 1]);
+                    }
                 }
             }
         }
