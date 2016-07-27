@@ -42,6 +42,22 @@
 
             return relativePath.BackSlashToForwardSlash();
         }
+
+        public static string GetAbsolutePath(string basePath, string relativePath)
+        {
+            if (basePath == null)
+            {
+                throw new ArgumentNullException(nameof(basePath));
+            }
+
+            if (relativePath == null)
+            {
+                throw new ArgumentNullException(nameof(relativePath));
+            }
+
+            Uri resultUri = new Uri(new Uri(basePath), new Uri(relativePath, UriKind.Relative));
+            return resultUri.LocalPath;
+        }
     }
 
     public class FilePathComparer
