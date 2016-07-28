@@ -2,6 +2,7 @@
 #    folder   #
 ###############
 .vs/
+target/
 DROP/
 TEMP/
 packages/

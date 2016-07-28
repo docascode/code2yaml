@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\shared\base.props" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{44F292D7-3964-4C42-9A58-2FADB24E3ABE}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Microsoft.Content.Build.Code2Yaml</RootNamespace>
+    <AssemblyName>code2yaml</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.ArticleGenerator\Microsoft.Content.Build.Code2Yaml.ArticleGenerator.csproj">
+      <Project>{887d8aff-e901-4024-b0b7-22d90c526ed4}</Project>
+      <Name>Microsoft.Content.Build.Code2Yaml.ArticleGenerator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.Common\Microsoft.Content.Build.Code2Yaml.Common.csproj">
+      <Project>{d0068b20-25e1-4634-a6f5-394b817e1995}</Project>
+      <Name>Microsoft.Content.Build.Code2Yaml.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.Constants\Microsoft.Content.Build.Code2Yaml.Constants.csproj">
+      <Project>{e673948d-9bea-4e3c-b2de-e0b3b3986567}</Project>
+      <Name>Microsoft.Content.Build.Code2Yaml.Constants</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.DataContracts\Microsoft.Content.Build.Code2Yaml.DataContracts.csproj">
+      <Project>{7ac0d45f-dc75-4129-a43b-f0013dcbefe0}</Project>
+      <Name>Microsoft.Content.Build.Code2Yaml.DataContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.NameGenerator\Microsoft.Content.Build.Code2Yaml.NameGenerator.csproj">
+      <Project>{4c930875-4572-49fc-8836-ce6222695653}</Project>
+      <Name>Microsoft.Content.Build.Code2Yaml.NameGenerator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.Steps\Microsoft.Content.Build.Code2Yaml.Steps.csproj">
+      <Project>{9c4e0225-26c7-460a-b288-f3c7b5b78484}</Project>
+      <Name>Microsoft.Content.Build.Code2Yaml.Steps</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

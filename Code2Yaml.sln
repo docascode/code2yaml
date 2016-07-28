@@ -3,7 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Code2Yaml", "Code2Yaml\Code2Yaml.csproj", "{44F292D7-3964-4C42-9A58-2FADB24E3ABE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "code2yaml", "src\code2yaml\code2yaml.csproj", "{44F292D7-3964-4C42-9A58-2FADB24E3ABE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.Common", "src\Microsoft.Content.Build.Code2Yaml.Common\Microsoft.Content.Build.Code2Yaml.Common.csproj", "{D0068B20-25E1-4634-A6F5-394B817E1995}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.DataContracts", "src\Microsoft.Content.Build.Code2Yaml.DataContracts\Microsoft.Content.Build.Code2Yaml.DataContracts.csproj", "{7AC0D45F-DC75-4129-A43B-F0013DCBEFE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.Constants", "src\Microsoft.Content.Build.Code2Yaml.Constants\Microsoft.Content.Build.Code2Yaml.Constants.csproj", "{E673948D-9BEA-4E3C-B2DE-E0B3B3986567}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.ArticleGenerator", "src\Microsoft.Content.Build.Code2Yaml.ArticleGenerator\Microsoft.Content.Build.Code2Yaml.ArticleGenerator.csproj", "{887D8AFF-E901-4024-B0B7-22D90C526ED4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.DeclarationGenerator", "src\Microsoft.Content.Build.Code2Yaml.DeclarationGenerator\Microsoft.Content.Build.Code2Yaml.DeclarationGenerator.csproj", "{B28AD1A8-6C6A-4BD8-B8FF-4F2BD26C34B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.Doxyfile", "src\Microsoft.Content.Build.Code2Yaml.Doxyfile\Microsoft.Content.Build.Code2Yaml.Doxyfile.csproj", "{ED8F63AC-8209-4059-AA8F-E1AE3FB411E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.NameGenerator", "src\Microsoft.Content.Build.Code2Yaml.NameGenerator\Microsoft.Content.Build.Code2Yaml.NameGenerator.csproj", "{4C930875-4572-49FC-8836-CE6222695653}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.Utility", "src\Microsoft.Content.Build.Code2Yaml.Utility\Microsoft.Content.Build.Code2Yaml.Utility.csproj", "{8F190B33-E157-47F1-8E71-D5D1D5C571FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.Steps", "src\Microsoft.Content.Build.Code2Yaml.Steps\Microsoft.Content.Build.Code2Yaml.Steps.csproj", "{9C4E0225-26C7-460A-B288-F3C7B5B78484}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +33,42 @@ Global
 		{44F292D7-3964-4C42-9A58-2FADB24E3ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44F292D7-3964-4C42-9A58-2FADB24E3ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44F292D7-3964-4C42-9A58-2FADB24E3ABE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0068B20-25E1-4634-A6F5-394B817E1995}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0068B20-25E1-4634-A6F5-394B817E1995}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0068B20-25E1-4634-A6F5-394B817E1995}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0068B20-25E1-4634-A6F5-394B817E1995}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AC0D45F-DC75-4129-A43B-F0013DCBEFE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AC0D45F-DC75-4129-A43B-F0013DCBEFE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AC0D45F-DC75-4129-A43B-F0013DCBEFE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AC0D45F-DC75-4129-A43B-F0013DCBEFE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E673948D-9BEA-4E3C-B2DE-E0B3B3986567}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E673948D-9BEA-4E3C-B2DE-E0B3B3986567}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E673948D-9BEA-4E3C-B2DE-E0B3B3986567}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E673948D-9BEA-4E3C-B2DE-E0B3B3986567}.Release|Any CPU.Build.0 = Release|Any CPU
+		{887D8AFF-E901-4024-B0B7-22D90C526ED4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{887D8AFF-E901-4024-B0B7-22D90C526ED4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{887D8AFF-E901-4024-B0B7-22D90C526ED4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{887D8AFF-E901-4024-B0B7-22D90C526ED4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B28AD1A8-6C6A-4BD8-B8FF-4F2BD26C34B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B28AD1A8-6C6A-4BD8-B8FF-4F2BD26C34B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B28AD1A8-6C6A-4BD8-B8FF-4F2BD26C34B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B28AD1A8-6C6A-4BD8-B8FF-4F2BD26C34B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED8F63AC-8209-4059-AA8F-E1AE3FB411E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED8F63AC-8209-4059-AA8F-E1AE3FB411E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED8F63AC-8209-4059-AA8F-E1AE3FB411E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED8F63AC-8209-4059-AA8F-E1AE3FB411E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C930875-4572-49FC-8836-CE6222695653}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C930875-4572-49FC-8836-CE6222695653}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C930875-4572-49FC-8836-CE6222695653}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C930875-4572-49FC-8836-CE6222695653}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F190B33-E157-47F1-8E71-D5D1D5C571FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F190B33-E157-47F1-8E71-D5D1D5C571FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F190B33-E157-47F1-8E71-D5D1D5C571FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F190B33-E157-47F1-8E71-D5D1D5C571FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C4E0225-26C7-460A-B288-F3C7B5B78484}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C4E0225-26C7-460A-B288-F3C7B5B78484}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C4E0225-26C7-460A-B288-F3C7B5B78484}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C4E0225-26C7-460A-B288-F3C7B5B78484}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
