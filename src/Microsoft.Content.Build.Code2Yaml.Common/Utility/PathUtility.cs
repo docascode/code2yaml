@@ -58,6 +58,11 @@
             Uri resultUri = new Uri(new Uri(basePath), new Uri(relativePath, UriKind.Relative));
             return resultUri.LocalPath;
         }
+
+        public static bool IsPathExisted(string path)
+        {
+            return File.Exists(path) || Directory.Exists(path);
+        }
     }
 
     public class FilePathComparer

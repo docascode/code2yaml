@@ -9,8 +9,8 @@
     [Serializable]
     public class ConfigModel
     {
-        [JsonProperty(Constants.InputPath, Required = Required.DisallowNull)]
-        public string InputPath { get; set; }
+        [JsonProperty(Constants.InputPaths, Required = Required.DisallowNull)]
+        public List<string> InputPaths { get; set; }
 
         [JsonProperty(Constants.OutputPath, Required = Required.DisallowNull)]
         public string OutputPath { get; set; }

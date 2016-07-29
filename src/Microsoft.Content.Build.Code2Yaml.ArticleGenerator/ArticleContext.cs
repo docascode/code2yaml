@@ -44,29 +44,5 @@
                 return (HierarchyChange)Context.GetSharedObject(Constants.ParentChange);
             }
         }
-
-        public string GitRepo
-        {
-            get
-            {
-                return (string)Context.GetSharedObject(Constants.GitRepo);
-            }
-        }
-
-        public string GitBranch
-        {
-            get
-            {
-                return (string)Context.GetSharedObject(Constants.GitBranch);
-            }
-        }
-
-        public string BasePath
-        {
-            get
-            {
-                return Config.InputPath;
-            }
-        }
     }
 }

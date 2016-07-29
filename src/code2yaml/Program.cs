@@ -16,8 +16,6 @@
     class Program
     {
         private static ConfigModel _config;
-        private static string _gitRepo;
-        private static string _gitBranch;
 
         static void Main(string[] args)
         {
@@ -27,8 +25,6 @@
             }
             var context = new BuildContext();
             context.SetSharedObject(Constants.Constants.Config, _config);
-            context.SetSharedObject(Constants.Constants.GitRepo, _gitRepo);
-            context.SetSharedObject(Constants.Constants.GitBranch, _gitBranch);
             var procedure = new StepCollection(
                 new RunDoxygen(),
                 new PreprocessXml(),
@@ -73,7 +69,6 @@
             try
             {
                 _config = JsonConvert.DeserializeObject<ConfigModel>(File.ReadAllText(configPath));
-                GitUtility.GetGitInfo(_config.InputPath, out _gitRepo, out _gitBranch);
             }
             catch (Exception ex)
             {

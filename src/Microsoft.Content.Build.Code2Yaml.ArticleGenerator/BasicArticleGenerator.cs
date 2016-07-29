@@ -30,8 +30,6 @@
         #region Abstract/Virtual Members
         public abstract string Language { get; }
 
-        protected abstract bool ShouldWriteHeader { get; }
-
         protected abstract void FillLanguageSpecificMetadata(ArticleItemYaml yaml, ArticleContext context, XElement node);
 
         protected abstract ReferenceViewModel CreateReferenceWithSpec(string uid, List<SpecViewModel> specs);
@@ -62,7 +60,7 @@
             mainYaml.Parent = curChange.Parent;
             mainYaml.Children = curChange.Children != null ? new List<string>(curChange.Children.OrderBy(c => c)) : new List<string>();
             FillSummary(mainYaml, main);
-            FillSource(mainYaml, main, articleContext.GitRepo, articleContext.GitBranch, articleContext.BasePath);
+            FillSource(mainYaml, main);
             FillSees(mainYaml, main);
             FillException(mainYaml, main);
             FillInheritance(nameContext, mainYaml, main);
@@ -89,7 +87,7 @@
                         memberYaml.Type = string.IsNullOrEmpty(member.NullableElement("type").NullableValue()) ? MemberType.Constructor : tuple.Item1.Value;
                         memberYaml.Parent = mainYaml.Uid;
                         FillSummary(memberYaml, member);
-                        FillSource(memberYaml, member, articleContext.GitRepo, articleContext.GitBranch, articleContext.BasePath);
+                        FillSource(memberYaml, member);
                         FillSees(memberYaml, member);
                         FillException(memberYaml, member);
                         FillOverridden(memberYaml, member);
@@ -244,31 +242,45 @@
             yaml.Overridden = node.NullableElement("reimplements").NullableAttribute("refid").NullableValue();
         }
 
-        protected void FillSource(ArticleItemYaml yaml, XElement node, string repo, string branch, string basePath)
+        protected void FillSource(ArticleItemYaml yaml, XElement node)
         {
             var location = node.NullableElement("location");
             if (!location.IsNull())
             {
-                string headerPath = GetRelativePath(location.NullableAttribute("file").NullableValue(), basePath);
+                string headerPath = location.NullableAttribute("file").NullableValue();
                 string headerStartlineStr = location.NullableAttribute("line").NullableValue();
-                string path = GetRelativePath(location.NullableAttribute("bodyfile").NullableValue(), basePath);
-                string startlineStr = location.NullableAttribute("bodystart").NullableValue();
                 int headerStartline = ParseStartline(headerStartlineStr);
-                int startline = ParseStartline(startlineStr);
-                if (ShouldWriteHeader)
-                {
-                    yaml.Header = new SourceDetail
-                    {
-                        Remote = new GitDetail { RemoteRepositoryUrl = repo, RemoteBranch = branch, RelativePath = headerPath },
-                        Path = headerPath,
-                        StartLine = headerStartline,
-                    };
-                }
+                string bodyPath = location.NullableAttribute("bodyfile").NullableValue();
+                string bodyStartlineStr = location.NullableAttribute("bodystart").NullableValue();
+                int bodyStartline = ParseStartline(bodyStartlineStr);
+                string path = bodyPath ?? headerPath;
+                int startLine = path == bodyPath ? bodyStartline : headerStartline;
+                var info = GitUtility.GetGitInfo(path);
+                string relativePath = GetRelativePath(path, info?.LocalWorkingDirectory);
                 yaml.Source = new SourceDetail
                 {
-                    Remote = new GitDetail { RemoteRepositoryUrl = repo, RemoteBranch = branch, RelativePath = path ?? headerPath },
-                    Path = path ?? headerPath,
-                    StartLine = path != null ? startline : headerStartline,
+                    Remote = new GitDetail { RemoteRepositoryUrl = info?.RemoteRepoUrl, RemoteBranch = info?.RemoteBranch, RelativePath = relativePath },
+                    Path = relativePath,
+                    StartLine = startLine,
+                };
+            }
+        }
+
+        protected void FillHeader(ArticleItemYaml yaml, XElement node)
+        {
+            var location = node.NullableElement("location");
+            if (!location.IsNull())
+            {
+                string headerPath = location.NullableAttribute("file").NullableValue();
+                string headerStartlineStr = location.NullableAttribute("line").NullableValue();
+                int headerStartline = ParseStartline(headerStartlineStr);
+                var info = GitUtility.GetGitInfo(headerPath);
+                string relativePath = GetRelativePath(headerPath, info?.LocalWorkingDirectory);
+                yaml.Header = new SourceDetail
+                {
+                    Remote = new GitDetail { RemoteRepositoryUrl = info?.RemoteRepoUrl, RemoteBranch = info?.RemoteBranch, RelativePath = relativePath },
+                    Path = relativePath,
+                    StartLine = headerStartline,
                 };
             }
         }
@@ -463,7 +475,7 @@
 
         private static string GetRelativePath(string original, string basePath)
         {
-            if (string.IsNullOrEmpty(original))
+            if (string.IsNullOrEmpty(original) || string.IsNullOrEmpty(basePath))
             {
                 return original;
             }

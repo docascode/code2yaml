@@ -27,6 +27,7 @@
             HierarchyChange curChange = context.CurrentChange;
             HierarchyChange parentChange = context.ParentChange;
             yaml.NamespaceName = parentChange?.Uid;
+            FillHeader(yaml, node);
         }
 
         protected override ReferenceViewModel CreateReferenceWithSpec(string uid, List<SpecViewModel> specs)
@@ -36,14 +37,6 @@
                 Uid = uid,
                 SpecForCpp = specs,
             };
-        }
-
-        protected override bool ShouldWriteHeader
-        {
-            get
-            {
-                return true;
-            }
         }
 
         protected override IEnumerable<string> GetDefaultInheritance(ArticleItemYaml yaml)

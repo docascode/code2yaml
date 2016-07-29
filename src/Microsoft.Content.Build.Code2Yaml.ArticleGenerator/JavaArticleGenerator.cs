@@ -37,14 +37,6 @@
             };
         }
 
-        protected override bool ShouldWriteHeader
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         protected override IEnumerable<string> GetDefaultInheritance(ArticleItemYaml yaml)
         {
             if (yaml.Type == MemberType.Enum)

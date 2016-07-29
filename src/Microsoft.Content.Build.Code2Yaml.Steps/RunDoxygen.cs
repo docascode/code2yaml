@@ -110,7 +110,8 @@
                 var content = DoxyfileParser.ParseDoxyfile(typeof(RunDoxygen).Assembly.GetManifestResourceStream(DoxyFileTemplate));
 
                 // update with config
-                content[Constants.Doxyfile.INPUT] = PathUtility.MakeRelativePath(Environment.CurrentDirectory, Path.GetFullPath(config.InputPath));
+                content[Constants.Doxyfile.INPUT] = (from i in config.InputPaths
+                                                     select PathUtility.MakeRelativePath(Environment.CurrentDirectory, Path.GetFullPath(i))).ToList();
                 content[Constants.Doxyfile.OUTPUT_DIRECTORY] = PathUtility.MakeRelativePath(Environment.CurrentDirectory, Path.GetFullPath(intermediateFolder));
                 if (config.ExcludePaths != null)
                 {

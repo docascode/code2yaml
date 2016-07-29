@@ -2,11 +2,9 @@
 {
     public static class Constants
     {
-        public const string InputPath = "input_path";
+        public const string InputPaths = "input_paths";
         public const string OutputPath = "output_path";
         public const string ExcludePaths = "exclude_paths";
-        public const string GitRepo = "git_repo";
-        public const string GitBranch = "git_branch";
         public const string Language = "language";
         public const string GenerateTocMDFile = "generate_toc_md";
         public const string Config = "config";
