@@ -1,9 +1,11 @@
 ﻿namespace Microsoft.Content.Build.Code2Yaml.Steps
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Xml.Linq;
@@ -36,6 +38,20 @@
                 Directory.Delete(processedOutputPath, recursive: true);
             }
             var dirInfo = Directory.CreateDirectory(processedOutputPath);
+
+            // get friendly uid for members
+            var memberUidMapping = new ConcurrentDictionary<string, string>();
+            await Directory.EnumerateFiles(inputPath, "*.xml").ForEachInParallelAsync(
+                p =>
+                {
+                    XDocument doc = XDocument.Load(p);
+                    foreach (var node in doc.XPathSelectElements("//memberdef[@id]"))
+                    {
+                        var id = node.Attribute("id").Value;
+                        memberUidMapping[id] = PreprocessMemberUid(node);
+                    }
+                    return Task.FromResult(1);
+                });
 
             // workaround for Doxygen Bug: it generated extra namespace for code `public string namespace(){ return ""; }`.
             // so if we find namespace which has same name with class, remove it from index file and also remove its file.
@@ -114,15 +130,25 @@
                 }
                 foreach (var node in doc.XPathSelectElements("//node()[@refid]"))
                 {
-                    node.Attribute("refid").Value = RegularizeUid(node.Attribute("refid").Value);
+                    node.Attribute("refid").Value = RegularizeUid(node.Attribute("refid").Value, memberUidMapping);
                 }
                 foreach (var node in doc.XPathSelectElements("//node()[@id]"))
                 {
-                    node.Attribute("id").Value = RegularizeUid(node.Attribute("id").Value);
+                    node.Attribute("id").Value = RegularizeUid(node.Attribute("id").Value, memberUidMapping);
                 }
                 doc.Save(Path.Combine(dirInfo.FullName, RegularizeUid(Path.GetFileNameWithoutExtension(p)) + Path.GetExtension(p)));
                 return Task.FromResult(1);
             });
+        }
+
+        private static string RegularizeUid(string uid, IDictionary<string, string> memberMapping)
+        {
+            string mapped;
+            if (memberMapping.TryGetValue(uid, out mapped))
+            {
+                return RegularizeUid(mapped);
+            }
+            return RegularizeUid(uid);
         }
 
         private static string RegularizeUid(string uid)
@@ -154,6 +180,27 @@
                 return true;
             }
             return false;
+        }
+
+        private static string PreprocessMemberUid(XElement memberDef)
+        {
+            StringBuilder builder = new StringBuilder();
+            string parentId = memberDef.Ancestors("compounddef").Single().Attribute("id").Value;
+            builder.Append(parentId);
+            builder.Append(Constants.IdSpliter);
+            builder.Append(memberDef.Element("name").Value);
+            builder.Append("(");
+            var parameters = memberDef.XPathSelectElements("param/type").ToList();
+            if (parameters.Count > 0)
+            {
+                builder.Append(parameters[0].Value);
+            }
+            foreach (var param in parameters.Skip(1))
+            {
+                builder.Append("," + param.Value);
+            }
+            builder.Append(")");
+            return builder.ToString();
         }
 
         private static string GetSectionKind(string access, string kind)
