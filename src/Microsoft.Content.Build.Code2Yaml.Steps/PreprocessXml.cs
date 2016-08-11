@@ -18,7 +18,7 @@
 
     public class PreprocessXml : IStep
     {
-        private static readonly Regex IdRegex = new Regex(@"^(namespace|class|struct|enum|interface)(\S+)$", RegexOptions.Compiled);
+        private static readonly Regex IdRegex = new Regex(@"^(namespace|class|struct|enum|interface)([\S\s]+)$", RegexOptions.Compiled);
         private static readonly Regex ToRegularizeTypeRegex = new Regex(@"^(public|protected|private)(?=.*?&lt;.*?&gt;)", RegexOptions.Compiled);
 
         public string StepName { get { return "Preprocess"; } }
