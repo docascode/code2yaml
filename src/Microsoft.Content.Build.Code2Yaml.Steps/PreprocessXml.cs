@@ -39,6 +39,19 @@
             }
             var dirInfo = Directory.CreateDirectory(processedOutputPath);
 
+            // workaround for Doxygen Bug: it generated xml whose encoding is ANSI while the xml meta is encoding='UTF-8'
+            Directory.EnumerateFiles(inputPath, "*.xml").AsParallel().ForAll(
+                p =>
+                {
+                    XDocument doc;
+                    using (var fs = File.OpenRead(p))
+                    using (var sr = new StreamReader(fs, Encoding.Default))
+                    {
+                        doc = XDocument.Load(sr);
+                    }
+                    doc.Save(p);
+                });
+
             // get friendly uid for members
             var memberUidMapping = new ConcurrentDictionary<string, string>();
             await Directory.EnumerateFiles(inputPath, "*.xml").ForEachInParallelAsync(
