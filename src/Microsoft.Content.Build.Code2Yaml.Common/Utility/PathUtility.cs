@@ -2,10 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.IO;
+    using System.Text.RegularExpressions;
 
     public static class PathUtility
     {
+
+        private static readonly Regex UriWithProtocol = new Regex(@"^\w{2,}\:", RegexOptions.Compiled);
+        private static readonly char[] InvalidPathChars = Path.GetInvalidPathChars();
+
         /// <summary>
         /// Creates a relative path from one file or folder to another.
         /// </summary>
@@ -62,6 +68,36 @@
         public static bool IsPathExisted(string path)
         {
             return File.Exists(path) || Directory.Exists(path);
+        }
+
+        public static bool IsRelativePath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return false;
+            }
+
+            // IsWellFormedUriString does not try to escape characters such as '\' ' ', '(', ')' and etc. first. Use TryCreate instead
+            Uri absoluteUri;
+            if (Uri.TryCreate(path, UriKind.Absolute, out absoluteUri))
+            {
+                return false;
+            }
+
+            if (UriWithProtocol.IsMatch(path))
+            {
+                return false;
+            }
+
+            foreach (var ch in InvalidPathChars)
+            {
+                if (path.Contains(ch))
+                {
+                    return false;
+                }
+            }
+
+            return !Path.IsPathRooted(path);
         }
     }
 

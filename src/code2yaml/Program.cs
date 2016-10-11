@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
 
     using Microsoft.Content.Build.Code2Yaml.ArticleGenerator;
     using Microsoft.Content.Build.Code2Yaml.Common;
@@ -68,7 +69,7 @@
             }
             try
             {
-                _config = JsonConvert.DeserializeObject<ConfigModel>(File.ReadAllText(configPath));
+                _config = LoadConfig(Path.GetFullPath(configPath));
             }
             catch (Exception ex)
             {
@@ -77,6 +78,25 @@
             }
             Console.WriteLine($"Config file {configPath} found. Start processing...");
             return true;
+        }
+
+        private static ConfigModel LoadConfig(string configPath)
+        {
+            var config = JsonConvert.DeserializeObject<ConfigModel>(File.ReadAllText(configPath));
+            config.InputPaths = (from p in config.InputPaths
+                                 select TransformPath(configPath, p)).ToList();
+            config.OutputPath = TransformPath(configPath, config.OutputPath);
+            if (config.ExcludePaths != null)
+            {
+                config.ExcludePaths = (from p in config.ExcludePaths
+                                       select TransformPath(configPath, p)).ToList();
+            }
+            return config;
+        }
+
+        private static string TransformPath(string configPath, string path)
+        {
+            return PathUtility.IsRelativePath(path) ? PathUtility.GetAbsolutePath(configPath, path) : path;
         }
     }
 }
