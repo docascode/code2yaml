@@ -8,7 +8,7 @@ Here is a simple `code2yaml.json`.
 
 ```json
 {
-  "input_path": "./azure-sdk-for-java",
+  "input_path": ["./azure-sdk-for-java"],
   "output_path": "./output",
   "exclude_paths": ["./azure-sdk-for-java/azure-samples"],
   "language": "java"
