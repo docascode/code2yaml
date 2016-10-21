@@ -20,6 +20,7 @@
     {
         private static readonly Regex IdRegex = new Regex(@"^(namespace|class|struct|enum|interface)([\S\s]+)$", RegexOptions.Compiled);
         private static readonly Regex ToRegularizeTypeRegex = new Regex(@"^(public|protected|private)(?=.*?&lt;.*?&gt;)", RegexOptions.Compiled);
+        private static readonly string CopyRightComment = @"Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See License.txt in the project root for license information.";
 
         public string StepName { get { return "Preprocess"; } }
 
@@ -148,6 +149,15 @@
                 foreach (var node in doc.XPathSelectElements("//node()[@id]"))
                 {
                     node.Attribute("id").Value = RegularizeUid(node.Attribute("id").Value, memberUidMapping);
+                }
+
+                // remove copyright comment
+                foreach (var node in doc.XPathSelectElements("//para").ToList())
+                {
+                    if (node.Value.Trim() == CopyRightComment)
+                    {
+                        node.Remove();
+                    }
                 }
                 doc.Save(Path.Combine(dirInfo.FullName, RegularizeUid(Path.GetFileNameWithoutExtension(p)) + Path.GetExtension(p)));
                 return Task.FromResult(1);
