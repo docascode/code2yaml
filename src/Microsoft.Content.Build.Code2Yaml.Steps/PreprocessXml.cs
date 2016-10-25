@@ -20,6 +20,8 @@
     {
         private static readonly Regex IdRegex = new Regex(@"^(namespace|class|struct|enum|interface)([\S\s]+)$", RegexOptions.Compiled);
         private static readonly Regex ToRegularizeTypeRegex = new Regex(@"^(public|protected|private)(?=.*?&lt;.*?&gt;)", RegexOptions.Compiled);
+        private static readonly Regex TemplateLeftTagRegex = new Regex(@"(&lt;)\s*", RegexOptions.Compiled);
+        private static readonly Regex TemplateRightTagRegex = new Regex(@"\s*(&gt;)", RegexOptions.Compiled);
         private static readonly string CopyRightComment = @"Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See License.txt in the project root for license information.";
 
         public string StepName { get { return "Preprocess"; } }
@@ -41,15 +43,15 @@
             var dirInfo = Directory.CreateDirectory(processedOutputPath);
 
             // workaround for Doxygen Bug: it generated xml whose encoding is ANSI while the xml meta is encoding='UTF-8'
+            // preprocess in string level: fix style for type with template parameter
             Directory.EnumerateFiles(inputPath, "*.xml").AsParallel().ForAll(
                 p =>
                 {
-                    XDocument doc;
-                    using (var fs = File.OpenRead(p))
-                    using (var sr = new StreamReader(fs, Encoding.Default))
-                    {
-                        doc = XDocument.Load(sr);
-                    }
+                    var content = File.ReadAllText(p, Encoding.Default);
+                    content = content.Replace(CopyRightComment, string.Empty);
+                    content = TemplateLeftTagRegex.Replace(content, "$1");
+                    content = TemplateRightTagRegex.Replace(content, "$1");
+                    XDocument doc = XDocument.Parse(content);
                     doc.Save(p);
                 });
 
