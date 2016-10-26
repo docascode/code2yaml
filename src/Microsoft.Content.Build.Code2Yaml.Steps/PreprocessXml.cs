@@ -48,7 +48,6 @@
                 p =>
                 {
                     var content = File.ReadAllText(p, Encoding.Default);
-                    content = content.Replace(CopyRightComment, string.Empty);
                     content = TemplateLeftTagRegex.Replace(content, "$1");
                     content = TemplateRightTagRegex.Replace(content, "$1");
                     XDocument doc = XDocument.Parse(content);
