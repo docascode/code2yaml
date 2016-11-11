@@ -35,12 +35,12 @@
             string kind = node.NullableAttribute("kind").NullableValue();
             if (kind != null)
             {
-                sb.Append(string.Format("{0} ", kind));
+                sb.Append(string.Format("{0} ", kind == "namespace" ? "package" : kind));
             }
             var name = YamlUtility.RegularizeName(node.NullableElement("compoundname").Value, Constants.Dot);
             int index = name.LastIndexOf(Constants.Dot);
             string innerName = name.Substring(index < 0 ? 0 : index + Constants.Dot.Length);
-            sb.Append(innerName);
+            sb.Append(kind == "namespace" ? name : innerName);
             var typeParams = node.XPathSelectElements("templateparamlist/param").ToList();
             if (typeParams.Count > 0)
             {

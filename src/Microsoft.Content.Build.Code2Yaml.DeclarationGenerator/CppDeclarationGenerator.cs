@@ -38,7 +38,7 @@
             var name = node.NullableElement("compoundname").Value;
             int index = name.LastIndexOf(Constants.NameSpliter);
             string innerName = name.Substring(index < 0 ? 0 : index + Constants.NameSpliter.Length);
-            sb.Append(innerName);
+            sb.Append(kind == "namespace" ? name : innerName);
             return sb.ToString();
         }
 
