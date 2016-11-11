@@ -1,4 +1,4 @@
-# code2yaml
+# code2yaml ![Build Status](https://ci.appveyor.com/api/projects/status/github/ansyral/code2yaml)
 A tool to extract metadata from code and export as yaml files
 
 ## configure code2yaml
