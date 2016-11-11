@@ -31,6 +31,9 @@ SET PATH=%PATH%;%LocalAppData%\NuGet
 
 CALL :RestorePackage
 
+:: Download Doxygen
+CALL :DownloadDoxygen
+
 :: Log build command line
 SET BuildLog=%~dp0msbuild.log
 SET BuildPrefix=echo
@@ -73,6 +76,12 @@ powershell -NoProfile -ExecutionPolicy UnRestricted -Command "$ProgressPreferenc
 :Restore
 :: Currently has corpnet dependency
 nuget restore "%BuildProj%"
+
+:DownloadDoxygen
+SET DoxygenLocation=%~dp0src\Microsoft.Content.Build.Code2Yaml.Steps\tools\doxygen.exe
+IF NOT EXIST "%DoxygenLocation%" (
+powershell -NoProfile -ExecutionPolicy UnRestricted -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest 'http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.12.windows.x64.bin.zip' -OutFile '%DoxygenLocation%'"
+)
 
 :Exit
 POPD
