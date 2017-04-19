@@ -40,6 +40,11 @@
             return YamlUtility.RegularizeName(YamlUtility.ParseMemberName(node.NullableElement("name").NullableValue(), node.NullableElement("argsstring").NullableValue()), Constants.Dot);
         }
 
+        public override string GenerateMemberNameWithType(string memberName, string typeName)
+        {
+            return string.Join(Constants.Dot, typeName, memberName);
+        }
+
         public override string GenerateId(NameGeneratorContext context, XElement node)
         {
             return YamlUtility.ParseIdFromUid(node.NullableAttribute("id").NullableValue(), Constants.Dot);

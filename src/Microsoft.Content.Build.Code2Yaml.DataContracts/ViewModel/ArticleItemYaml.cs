@@ -30,6 +30,9 @@
         [YamlMember(Alias = "name")]
         public string Name { get; set; }
 
+        [YamlMember(Alias = "nameWithType")]
+        public string NameWithType { get; set; }
+
         [YamlMember(Alias = "nameWithoutTypeParameter")]
         [YamlIgnore]
         public string NameWithoutTypeParameter { get; set; }

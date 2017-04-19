@@ -28,6 +28,11 @@
             return YamlUtility.ParseMemberName(node.NullableElement("name").NullableValue(), node.NullableElement("argsstring").NullableValue());
         }
 
+        public override string GenerateMemberNameWithType(string memberName, string typeName)
+        {
+            return string.Join(Constants.NameSpliter, typeName, memberName);
+        }
+
         public override string GenerateId(NameGeneratorContext context, XElement node)
         {
             return YamlUtility.ParseIdFromUid(node.NullableAttribute("id").NullableValue(), Constants.NameSpliter);

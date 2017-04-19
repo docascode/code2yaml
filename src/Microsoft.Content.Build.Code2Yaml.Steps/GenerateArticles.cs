@@ -93,6 +93,7 @@
                         {
                             reference.Name = yaml.Name;
                             reference.Type = yaml.Type;
+                            reference.NameWithType = yaml.NameWithType;
                             reference.FullName = yaml.FullName;
                             reference.Href = yaml.Href;
                             reference.Parent = yaml.Parent;

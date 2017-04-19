@@ -53,6 +53,7 @@
             mainYaml.SupportedLanguages = new string[] { Language };
             mainYaml.FullName = _nameGenerator.GenerateTypeFullName(nameContext, main, true);
             mainYaml.Name = _nameGenerator.GenerateTypeName(nameContext, main, true);
+            mainYaml.NameWithType = mainYaml.Name;
             mainYaml.FullNameWithoutTypeParameter = _nameGenerator.GenerateTypeFullName(nameContext, main, false);
             mainYaml.NameWithoutTypeParameter = _nameGenerator.GenerateTypeName(nameContext, main, false);
             mainYaml.Href = YamlUtility.ParseHrefFromChangeFile(curChange.File);
@@ -83,6 +84,7 @@
                         memberYaml.SupportedLanguages = new string[] { Language };
                         memberYaml.FullName = _nameGenerator.GenerateMemberFullName(nameContext, member);
                         memberYaml.Name = _nameGenerator.GenerateMemberName(nameContext, member);
+                        memberYaml.NameWithType = _nameGenerator.GenerateMemberNameWithType(memberYaml.Name, mainYaml.Name);
                         memberYaml.Href = mainYaml.Href;
                         memberYaml.Type = string.IsNullOrEmpty(member.NullableElement("type").NullableValue()) ? MemberType.Constructor : tuple.Item1.Value;
                         memberYaml.Parent = mainYaml.Uid;

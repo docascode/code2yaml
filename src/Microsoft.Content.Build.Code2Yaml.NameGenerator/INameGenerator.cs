@@ -13,6 +13,8 @@
 
         public abstract string GenerateMemberName(NameGeneratorContext context, XElement node);
 
+        public abstract string GenerateMemberNameWithType(string memberName, string typeName);
+
         public abstract string GenerateId(NameGeneratorContext context, XElement node);
 
         public abstract string GenerateLabel(NameGeneratorContext context, XElement node);
