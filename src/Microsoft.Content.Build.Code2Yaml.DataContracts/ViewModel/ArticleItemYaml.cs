@@ -44,6 +44,9 @@
         [YamlIgnore]
         public string FullNameWithoutTypeParameter { get; set; }
 
+        [YamlMember(Alias = "overload")]
+        public string Overload { get; set; }
+
         [YamlMember(Alias = "type")]
         public MemberType? Type { get; set; }
 

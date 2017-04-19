@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Xml.Linq;
     using System.Xml.XPath;
@@ -20,6 +21,7 @@
         private List<ReferenceViewModel> _references = new List<ReferenceViewModel>();
         private INameGenerator _nameGenerator;
         private DeclarationGenerator _declarationGenerator;
+        private static readonly Regex GenericMethodPostFix = new Regex(@"``\d+$", RegexOptions.Compiled);
 
         public BasicArticleGenerator(INameGenerator nameGenerator, DeclarationGenerator declarationGenerator)
         {
@@ -88,6 +90,7 @@
                         memberYaml.Href = mainYaml.Href;
                         memberYaml.Type = string.IsNullOrEmpty(member.NullableElement("type").NullableValue()) ? MemberType.Constructor : tuple.Item1.Value;
                         memberYaml.Parent = mainYaml.Uid;
+                        FillOverload(memberYaml, member);
                         FillSummary(memberYaml, member);
                         FillSource(memberYaml, member);
                         FillSees(memberYaml, member);
@@ -137,6 +140,46 @@
                 mainItem.Syntax.Content += _declarationGenerator.GenerateInheritImplementString(infoDict, mainItem);
             }
             return Task.FromResult(1);
+        }
+
+        protected void FillOverload(ArticleItemYaml yaml, XElement node)
+        {
+            var kind = node.NullableAttribute("kind").NullableValue();
+            var type = KindMapToType(kind).Item1;
+            switch (type)
+            {
+                case MemberType.Method:
+                case MemberType.Constructor:
+                    yaml.Overload = AddOverloadReference(yaml);
+                    break;
+            }
+        }
+
+        private string AddOverloadReference(ArticleItemYaml yaml)
+        {
+            string id = yaml.Uid;
+            var uidBody = RemoveArgs(id);
+            uidBody = GenericMethodPostFix.Replace(uidBody, string.Empty);
+            string uid = uidBody + "*";
+            ReferenceViewModel reference = new ReferenceViewModel()
+            {
+                Uid = uid,
+                Name = RemoveArgs(yaml.Name),
+                FullName = RemoveArgs(yaml.FullName),
+                NameWithType = RemoveArgs(yaml.NameWithType),
+            };
+            _references.Add(reference);
+            return uid;
+        }
+
+        private static string RemoveArgs(string original)
+        {
+            var index = original.IndexOf('(');
+            if (index != -1)
+            {
+                return original.Remove(index);
+            }
+            return original;
         }
 
         protected void FillSummary(ArticleItemYaml yaml, XElement node)
