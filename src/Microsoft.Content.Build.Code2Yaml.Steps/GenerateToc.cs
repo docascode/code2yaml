@@ -50,11 +50,11 @@
                 new YamlSerializer().Serialize(writer, tocYaml);
             }
 
-            string tocMDFile = Path.Combine(outputPath, Constants.TocMDFileName);
-            using (var writer = new StreamWriter(tocMDFile))
+            bool generateTocMDFile = config.GenerateTocMDFile;
+            if (generateTocMDFile)
             {
-                bool generateTocMDFile = config.GenerateTocMDFile;
-                if (generateTocMDFile)
+                string tocMDFile = Path.Combine(outputPath, Constants.TocMDFileName);
+                using (var writer = new StreamWriter(tocMDFile))
                 {
                     foreach (var item in tocYaml)
                     {
