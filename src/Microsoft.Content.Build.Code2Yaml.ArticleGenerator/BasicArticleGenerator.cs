@@ -88,7 +88,7 @@
                         memberYaml.Name = _nameGenerator.GenerateMemberName(nameContext, member);
                         memberYaml.NameWithType = _nameGenerator.GenerateMemberNameWithType(memberYaml.Name, mainYaml.Name);
                         memberYaml.Href = mainYaml.Href;
-                        memberYaml.Type = string.IsNullOrEmpty(member.NullableElement("type").NullableValue()) ? MemberType.Constructor : tuple.Item1.Value;
+                        memberYaml.Type = string.IsNullOrEmpty(member.NullableElement("type").NullableValue()) && tuple.Item1.Value == MemberType.Method ? MemberType.Constructor : tuple.Item1.Value;
                         memberYaml.Parent = mainYaml.Uid;
                         FillSummary(memberYaml, member);
                         FillSource(memberYaml, member);
