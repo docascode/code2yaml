@@ -90,7 +90,6 @@
                         memberYaml.Href = mainYaml.Href;
                         memberYaml.Type = string.IsNullOrEmpty(member.NullableElement("type").NullableValue()) ? MemberType.Constructor : tuple.Item1.Value;
                         memberYaml.Parent = mainYaml.Uid;
-                        FillOverload(memberYaml, member);
                         FillSummary(memberYaml, member);
                         FillSource(memberYaml, member);
                         FillSees(memberYaml, member);
@@ -98,6 +97,7 @@
                         FillOverridden(memberYaml, member);
                         FillSyntax(memberYaml, member, isMain: false);
                         FillLanguageSpecificMetadata(memberYaml, articleContext, member);
+                        FillOverload(memberYaml, member);
 
                         if (members.ContainsKey(memberYaml.Uid))
                         {
@@ -167,6 +167,7 @@
                 Name = RemoveArgs(yaml.Name),
                 FullName = RemoveArgs(yaml.FullName),
                 NameWithType = RemoveArgs(yaml.NameWithType),
+                PackageName = yaml.PackageName,
             };
             _references.Add(reference);
             return uid;

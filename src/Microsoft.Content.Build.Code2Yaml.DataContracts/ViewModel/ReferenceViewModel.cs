@@ -45,5 +45,8 @@
 
         [YamlMember(Alias = "syntax")]
         public SyntaxDetailViewModel Syntax { get; set; }
+
+        [YamlMember(Alias = "package")]
+        public string PackageName { get; set; }
     }
 }
