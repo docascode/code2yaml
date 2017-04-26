@@ -12,9 +12,8 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.DocAsCode.YamlSerialization, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.DocAsCode.YamlSerialization.2.2.2\lib\net45\Microsoft.DocAsCode.YamlSerialization.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.DocAsCode.YamlSerialization, Version=2.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.DocAsCode.YamlSerialization.2.13.0\lib\net452\Microsoft.DocAsCode.YamlSerialization.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -24,9 +23,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="YamlDotNet, Version=3.7.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\YamlDotNet.Signed.3.7.0\lib\net35\YamlDotNet.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="YamlDotNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\YamlDotNet.Signed.4.1.0\lib\net35\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -70,10 +68,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <EmbeddedResource Include="template\DoxyfileTemplate" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="tools\doxygen.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
