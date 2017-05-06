@@ -70,6 +70,10 @@
                     if (IsFiltered(prot))
                     {
                         itemsToRemove.Add(pair.Key);
+
+                        // add innerclass because Doxygen would still output nested public classes
+                        var inner = def.Elements("innerclass").Select(i => (string)i.Attribute("refid"));
+                        itemsToRemove.AddRange(inner);
                         continue;
                     }
 
