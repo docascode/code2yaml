@@ -5,8 +5,8 @@ build_script:
 clone_depth: 1
 os: Visual Studio 2015 CTP
 test: off
-on_success:
-  - 7z a code2yaml-v$(appveyor_build_version).zip %APPVEYOR_BUILD_FOLDER%\target\Release\code2yaml\* -r -x!*.pdb
+after_build:
+  - 7z a code2yaml-v%appveyor_build_version%.zip %APPVEYOR_BUILD_FOLDER%\target\Release\code2yaml\* -r -x!*.pdb
 artifacts:
   - path: code2yaml-v$(appveyor_build_version).zip
     name: code2yaml
