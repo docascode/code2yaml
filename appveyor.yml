@@ -5,6 +5,17 @@ build_script:
 clone_depth: 1
 os: Visual Studio 2015 CTP
 test: off
-deploy: off
+deploy:
+  release: code2yaml-v$(appveyor_build_version)
+  description: 'Release'
+  provider: GitHub
+  auth_token:
+    secure: G3ZMeRiqtsqfwJ8Ysm1r+50B6m5dEHOzhhGnaAoTDX/P5Lo4G7ibfH2BgtF9IViG
+  artifact: /.*\.nupkg/            
+  draft: false
+  prerelease: false
+  on:
+    branch: azuredocs                # release from azuredocs branch only
+    appveyor_repo_tag: false        # deploy on tag push only
 #on_finish:
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
