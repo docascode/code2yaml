@@ -6,9 +6,9 @@ clone_depth: 1
 os: Visual Studio 2015 CTP
 test: off
 on_success:
-  - 7z a code2yaml.zip %APPVEYOR_BUILD_FOLDER%\target\Release\code2yaml\* -r -x!*.pdb
+  - 7z a code2yaml-v$(appveyor_build_version).zip %APPVEYOR_BUILD_FOLDER%\target\Release\code2yaml\* -r -x!*.pdb
 artifacts:
-  - path: code2yaml.zip
+  - path: code2yaml-v$(appveyor_build_version).zip
     name: code2yaml
 deploy:
   release: code2yaml-v$(appveyor_build_version)
@@ -16,7 +16,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: G3ZMeRiqtsqfwJ8Ysm1r+50B6m5dEHOzhhGnaAoTDX/P5Lo4G7ibfH2BgtF9IViG
-  artifact: code2yaml.zip            
+  artifact: code2yaml            
   draft: false
   prerelease: false
   on:
