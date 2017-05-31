@@ -375,7 +375,7 @@
         protected void FillInheritedMembers(ArticleItemYaml yaml, XElement node)
         {
             var allMembers = from m in node.NullableElement("listofallmembers").Elements("member")
-                             where m.NullableAttribute("prot").NullableValue() != "private"
+                             where !YamlUtility.IsFiltered(m.NullableAttribute("prot").NullableValue())
                              select m.NullableAttribute("refid").NullableValue();
             yaml.InheritedMembers = allMembers.Except(yaml.Children).ToList();
             _references.AddRange(yaml.InheritedMembers.Select(i => new ReferenceViewModel { Uid = i }));

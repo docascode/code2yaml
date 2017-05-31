@@ -79,5 +79,14 @@
             }
             return name.Replace(Constants.NameSpliter, nameSpliter);
         }
+
+        public static bool IsFiltered(string prot)
+        {
+            if (prot == null)
+            {
+                return false;
+            }
+            return prot.Contains("private") || prot.Contains("package");
+        }
     }
 }

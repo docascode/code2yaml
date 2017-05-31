@@ -67,7 +67,7 @@
 
                     // filter out package-private item
                     var prot = (string)def.Attribute("prot");
-                    if (IsFiltered(prot))
+                    if (YamlUtility.IsFiltered(prot))
                     {
                         itemsToRemove.Add(pair.Key);
 
@@ -78,7 +78,7 @@
                     }
 
                     // check innerclass's access label because Doxygen would still output nested private/package-private classes
-                    var innerClasses = def.Elements("innerclass").Where(e => !IsFiltered((string)e.Attribute("prot")));
+                    var innerClasses = def.Elements("innerclass").Where(e => !YamlUtility.IsFiltered((string)e.Attribute("prot")));
                     foreach (var inner in innerClasses)
                     {
                         string innerId = (string)inner.Attribute("refid");
@@ -154,15 +154,6 @@
                 return null;
             }
             return htype;
-        }
-
-        private static bool IsFiltered(string prot)
-        {
-            if (prot == null)
-            {
-                return false;
-            }
-            return prot.Contains("private") || prot.Contains("package");
         }
     }
 }
