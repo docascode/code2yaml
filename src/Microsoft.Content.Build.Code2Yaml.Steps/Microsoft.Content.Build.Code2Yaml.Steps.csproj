@@ -29,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GenerateArticles.cs" />
+    <Compile Include="GenerateServiceMappingFile.cs" />
     <Compile Include="GenerateToc.cs" />
     <Compile Include="IStep.cs" />
     <Compile Include="PreprocessXml.cs" />

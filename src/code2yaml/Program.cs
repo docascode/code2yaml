@@ -34,7 +34,9 @@
                     new List<IStep>
                     {
                         new GenerateToc { NameGenerator = NameGeneratorFactory.Create(_config.Language) },
-                        new GenerateArticles { Generator = ArticleGeneratorFactory.Create(_config.Language) },
+                        new StepCollection(
+                            new GenerateArticles { Generator = ArticleGeneratorFactory.Create(_config.Language) },
+                            new GenerateServiceMappingFile()),
                     }));
             string status = "Failed";
             var watch = Stopwatch.StartNew();

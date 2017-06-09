@@ -33,8 +33,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigModel\ConfigModel.cs" />
+    <Compile Include="ConfigModel\ServiceMappingConfig.cs" />
     <Compile Include="Hierarchy\HierarchyChange.cs" />
     <Compile Include="Hierarchy\HierarchyType.cs" />
+    <Compile Include="ServiceMapping\ServiceMapping.cs" />
+    <Compile Include="ServiceMapping\ServiceMappingItem.cs" />
     <Compile Include="ViewModel\ApiParameter.cs" />
     <Compile Include="ViewModel\ArticleItemYaml.cs" />
     <Compile Include="ViewModel\CrefInfo.cs" />

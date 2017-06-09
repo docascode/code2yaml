@@ -6,6 +6,7 @@
         public const string OutputPath = "output_path";
         public const string ExcludePaths = "exclude_paths";
         public const string Language = "language";
+        public const string ServiceMapping = "service_mapping";
         public const string GenerateTocMDFile = "generate_toc_md";
         public const string Config = "config";
         public const string IndexFileName = "index.xml";
@@ -35,6 +36,14 @@
             public const string INPUT = "INPUT";
             public const string OUTPUT_DIRECTORY = "OUTPUT_DIRECTORY";
             public const string EXCLUDE = "EXCLUDE";
+        }
+
+        public static class ServiceMappingConfig
+        {
+            public const string Mappings = "mappings";
+            public const string OutputPath = "service_mapping_output_path";
+            public const string Service = "service";
+            public const string Category = "category";
         }
     }
 }
