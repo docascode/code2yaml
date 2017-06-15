@@ -57,7 +57,7 @@
                     var oldservices = (from m in oldMapping[0].items
                                        from sm in m.items ?? Enumerable.Empty<ServiceMappingItem>()
                                        select new { SM = sm, Name = m.name }
-                                       ).ToDictionary(i => new ServiceCategory { Service = i.Name, Category = i.SM.name }, i => i.SM.children.ToList());
+                                       ).ToDictionary(i => new ServiceCategory { Service = i.Name, Category = i.SM.name }, i => i.SM.children?.ToList() ?? new List<string>());
                     Merge(newservices, oldservices);
                     var other = oldMapping[0].items.SingleOrDefault(i => i.name == "Other");
                     if (other != null)
