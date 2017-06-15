@@ -108,7 +108,7 @@
                                                name = service,
                                                href = hrefAndType.Item1,
                                                landingPageType = hrefAndType.Item2,
-                                               uid = "azure.java.sdk.landingpage.services." + service,
+                                               uid = "azure.java.sdk.landingpage.services." + FormatUid(service),
                                                items = new ServiceMapping(from item in pair.Value
                                                                           let category = item.Category
                                                                           let chrefAndType = GetHrefAndType(hrefMapping, GetKey(service, category))
@@ -117,7 +117,7 @@
                                                                               name = item.Category,
                                                                               href = chrefAndType.Item1,
                                                                               landingPageType = chrefAndType.Item2,
-                                                                              uid = "azure.java.sdk.landingpage.services." + service.Replace(" ", "").ToLower() + "." + category,
+                                                                              uid = "azure.java.sdk.landingpage.services." + FormatUid(service) + "." + category,
                                                                               children = item.Uids.ToList()
                                                                           })
                                            }).OrderBy(s => s.name))
@@ -184,6 +184,11 @@
         private static string GetKey(string service, string category)
         {
             return service + "." + category;
+        }
+
+        private static string FormatUid(string service)
+        {
+            return service.Replace(" ", "").ToLower();
         }
     }
 }
