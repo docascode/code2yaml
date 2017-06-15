@@ -14,6 +14,8 @@
 
     public class GenerateServiceMappingFile : IStep
     {
+        private const string LandingPageTypeService = "Service";
+
         public string StepName
         {
             get
@@ -46,6 +48,7 @@
                               ).ToDictionary(g => g.Key, g => g.ToList());
 
             List<ServiceMappingItem> others = new List<ServiceMappingItem>();
+            Dictionary<string, string> serviceHrefMapping = new Dictionary<string, string>();
             if (File.Exists(outputPath))
             {
                 using (var reader = new StreamReader(outputPath))
@@ -61,6 +64,7 @@
                     {
                         others.Add(other);
                     }
+                    serviceHrefMapping = oldMapping[0].items.ToDictionary(i => i.name, i => i.href);
                 }
 
             }
@@ -87,17 +91,20 @@
                     landingPageType = "Root",
                     items = new ServiceMapping((from pair in services
                                            let service = pair.Key
+                                           let hrefAndType = GetServiceHrefAndType(serviceHrefMapping, service)
                                            select new ServiceMappingItem()
                                            {
                                                name = service,
-                                               href = "~/docs-ref-services/overview/azure/" + service + ".md",
+                                               href = hrefAndType.Item1,
+                                               landingPageType = hrefAndType.Item2,
+                                               uid = "landingpage.services." + service,
                                                items = new ServiceMapping(from item in pair.Value
                                                                           let category = item.Category
                                                                           select new ServiceMappingItem()
                                                                           {
                                                                               name = item.Category,
                                                                               uid = "landingpage.services." + service + "." + category,
-                                                                              landingPageType = "Service",
+                                                                              landingPageType = LandingPageTypeService,
                                                                               children = item.Uids.ToList()
                                                                           })
                                            }).OrderBy(s => s.name))
@@ -145,7 +152,21 @@
                 {
                     a[pair.Key] = new List<string>();
                 }
+                // to-do: when product repo's mapping file is ready, should change the behavior to overwrite.
                 a[pair.Key].AddRange(pair.Value);
+            }
+        }
+
+        private static Tuple<string, string> GetServiceHrefAndType(Dictionary<string, string> mapping, string service)
+        {
+            string href;
+            if (mapping.TryGetValue(service, out href))
+            {
+                return Tuple.Create<string, string>(href, null);
+            }
+            else
+            {
+                return Tuple.Create<string, string>(null, LandingPageTypeService);
             }
         }
     }
