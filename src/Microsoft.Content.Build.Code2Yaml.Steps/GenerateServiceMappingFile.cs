@@ -117,7 +117,7 @@
                                                                               name = item.Category,
                                                                               href = chrefAndType.Item1,
                                                                               landingPageType = chrefAndType.Item2,
-                                                                              uid = "azure.java.sdk.landingpage.services." + service + "." + category,
+                                                                              uid = "azure.java.sdk.landingpage.services." + service.Replace(" ", "").ToLower() + "." + category,
                                                                               children = item.Uids.ToList()
                                                                           })
                                            }).OrderBy(s => s.name))
