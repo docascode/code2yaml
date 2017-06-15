@@ -47,24 +47,35 @@
                                select g
                               ).ToDictionary(g => g.Key, g => g.ToList());
 
-            List<ServiceMappingItem> others = new List<ServiceMappingItem>();
-            Dictionary<string, string> serviceHrefMapping = new Dictionary<string, string>();
+            ServiceMappingItem other = new ServiceMappingItem
+            {
+                name = "Other",
+                landingPageType = LandingPageTypeService,
+                uid = "azure.java.sdk.landingpage.services.other",
+                children = new List<string> { "*" },
+            };
+            Dictionary<string, string> hrefMapping = new Dictionary<string, string>();
             if (File.Exists(outputPath))
             {
                 using (var reader = new StreamReader(outputPath))
                 {
                     var oldMapping = new YamlDeserializer().Deserialize<ServiceMapping>(reader);
-                    var oldservices = (from m in oldMapping[0].items
-                                       from sm in m.items ?? Enumerable.Empty<ServiceMappingItem>()
-                                       select new { SM = sm, Name = m.name }
-                                       ).ToDictionary(i => new ServiceCategory { Service = i.Name, Category = i.SM.name }, i => i.SM.children?.ToList() ?? new List<string>());
-                    Merge(newservices, oldservices);
-                    var other = oldMapping[0].items.SingleOrDefault(i => i.name == "Other");
-                    if (other != null)
+                    foreach (var m in oldMapping[0].items)
                     {
-                        others.Add(other);
+                        if (m.name == "Other")
+                        {
+                            other = m;
+                            continue;
+                        }
+                        hrefMapping[m.name] = m.href;
+                        foreach (var c in m.items ?? Enumerable.Empty<ServiceMappingItem>())
+                        {
+                            var sc = new ServiceCategory { Service = m.name, Category = c.name };
+                            Merge(newservices, sc, c.children?.ToList() ?? new List<string>());
+                            hrefMapping[GetKey(m.name, c.name)] = c.href;
+                        }
                     }
-                    serviceHrefMapping = oldMapping[0].items.ToDictionary(i => i.name, i => i.href);
+
                 }
 
             }
@@ -86,31 +97,34 @@
             {
                 new ServiceMappingItem()
                 {
-                    uid = "landingpage.reference",
+                    uid = "azure.java.sdk.landingpage.reference",
                     name = "Reference",
                     landingPageType = "Root",
                     items = new ServiceMapping((from pair in services
                                            let service = pair.Key
-                                           let hrefAndType = GetServiceHrefAndType(serviceHrefMapping, service)
+                                           let hrefAndType = GetHrefAndType(hrefMapping, service)
                                            select new ServiceMappingItem()
                                            {
                                                name = service,
                                                href = hrefAndType.Item1,
                                                landingPageType = hrefAndType.Item2,
-                                               uid = "landingpage.services." + service,
+                                               uid = "azure.java.sdk.landingpage.services." + service,
                                                items = new ServiceMapping(from item in pair.Value
                                                                           let category = item.Category
+                                                                          let chrefAndType = GetHrefAndType(hrefMapping, GetKey(service, category))
                                                                           select new ServiceMappingItem()
                                                                           {
                                                                               name = item.Category,
-                                                                              uid = "landingpage.services." + service + "." + category,
-                                                                              landingPageType = LandingPageTypeService,
+                                                                              href = chrefAndType.Item1,
+                                                                              landingPageType = chrefAndType.Item2,
+                                                                              uid = "azure.java.sdk.landingpage.services." + service + "." + category,
                                                                               children = item.Uids.ToList()
                                                                           })
                                            }).OrderBy(s => s.name))
                 }
             };
-            mapping[0].items.AddRange(others);
+            mapping[0].items.Add(other);
+
             using (var writer = new StreamWriter(outputPath))
             {
                 new YamlSerializer().Serialize(writer, mapping);
@@ -143,24 +157,21 @@
             return path.Replace('\\', '/');
         }
 
-        private static void Merge(Dictionary<ServiceCategory, List<string>> a, Dictionary<ServiceCategory, List<string>> b)
+        private static void Merge(Dictionary<ServiceCategory, List<string>> a, ServiceCategory sc, List<string> uids)
         {
-            foreach (var pair in b)
+            List<string> value;
+            if (!a.TryGetValue(sc, out value))
             {
-                List<string> value;
-                if (!a.TryGetValue(pair.Key, out value))
-                {
-                    a[pair.Key] = new List<string>();
-                }
-                // to-do: when product repo's mapping file is ready, should change the behavior to overwrite.
-                a[pair.Key].AddRange(pair.Value);
+                a[sc] = new List<string>();
             }
+            // to-do: when product repo's mapping file is ready, should change the behavior to overwrite.
+            a[sc].AddRange(uids);
         }
 
-        private static Tuple<string, string> GetServiceHrefAndType(Dictionary<string, string> mapping, string service)
+        private static Tuple<string, string> GetHrefAndType(Dictionary<string, string> mapping, string key)
         {
             string href;
-            if (mapping.TryGetValue(service, out href))
+            if (mapping.TryGetValue(key, out href) && !string.IsNullOrEmpty(href))
             {
                 return Tuple.Create<string, string>(href, null);
             }
@@ -168,6 +179,11 @@
             {
                 return Tuple.Create<string, string>(null, LandingPageTypeService);
             }
+        }
+
+        private static string GetKey(string service, string category)
+        {
+            return service + "." + category;
         }
     }
 }
