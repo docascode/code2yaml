@@ -59,7 +59,7 @@
             {
                 using (var reader = new StreamReader(outputPath))
                 {
-                    var oldMapping = new YamlDeserializer().Deserialize<ServiceMapping>(reader);
+                    var oldMapping = new YamlDeserializer(ignoreUnmatched: true).Deserialize<ServiceMapping>(reader);
                     foreach (var m in oldMapping[0].items)
                     {
                         if (m.name == "Other")
