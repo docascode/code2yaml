@@ -18,11 +18,11 @@
     {
         private static ConfigModel _config;
 
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             if (!ValidateConfig(args))
             {
-                return;
+                return 1;
             }
             var context = new BuildContext();
             context.SetSharedObject(Constants.Constants.Config, _config);
@@ -38,12 +38,12 @@
                             new GenerateArticles { Generator = ArticleGeneratorFactory.Create(_config.Language) },
                             new GenerateServiceMappingFile()),
                     }));
-            string status = "Failed";
+            var status = 1;
             var watch = Stopwatch.StartNew();
             try
             {
                 procedure.RunAsync(context).Wait();
-                status = "Succeeded";
+                status = 0;
             }
             catch
             {
@@ -53,7 +53,9 @@
             {
                 watch.Stop();
             }
-            Console.WriteLine($"{status} in {watch.ElapsedMilliseconds} milliseconds.");
+            var statusString = status == 0 ? "Succeeded" : "Failed";
+            Console.WriteLine($"{statusString} in {watch.ElapsedMilliseconds} milliseconds.");
+            return status;
         }
 
         private static bool ValidateConfig(string[] args)
