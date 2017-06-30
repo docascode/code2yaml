@@ -20,6 +20,8 @@
 
         static int Main(string[] args)
         {
+            Console.WriteLine("This aims to test disable using PR artifacts!");
+            return 1;
             if (!ValidateConfig(args))
             {
                 return 1;
