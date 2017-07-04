@@ -31,6 +31,13 @@
         public const string CmdArgLanguage = "lang:";
         public const string Dot = ".";
 
+        public static class YamlMime
+        {
+            public const string YamlMimePrefix = "### YamlMime:";
+            public const string ManagedReference = YamlMimePrefix + "ManagedReference";
+            public const string TableOfContent = YamlMimePrefix + "TableOfContent";
+        }
+
         public static class Doxyfile
         {
             public const string INPUT = "INPUT";

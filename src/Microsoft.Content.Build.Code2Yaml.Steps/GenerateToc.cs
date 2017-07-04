@@ -47,6 +47,7 @@
             string tocFile = Path.Combine(outputPath, Constants.TocYamlFileName);
             using (var writer = new StreamWriter(tocFile))
             {
+                writer.WriteLine(Constants.YamlMime.TableOfContent);
                 new YamlSerializer().Serialize(writer, tocYaml);
             }
 
