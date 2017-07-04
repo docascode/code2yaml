@@ -116,6 +116,7 @@
                     }
                     using (var writer = new StreamWriter(Path.Combine(outputPath, page.Items[0].Href)))
                     {
+                        writer.WriteLine(Constants.YamlMime.ManagedReference);
                         YamlSerializer.Value.Serialize(writer, page);
                     }
                 });
