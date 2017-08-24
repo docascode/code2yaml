@@ -225,17 +225,20 @@
             builder.Append(parentId);
             builder.Append(Constants.IdSpliter);
             builder.Append(memberDef.Element("name").Value);
-            builder.Append("(");
-            var parameters = memberDef.XPathSelectElements("param/type").ToList();
-            if (parameters.Count > 0)
+            if (memberDef.Attribute("kind")?.Value == "function")
             {
-                builder.Append(parameters[0].Value);
+                builder.Append("(");
+                var parameters = memberDef.XPathSelectElements("param/type").ToList();
+                if (parameters.Count > 0)
+                {
+                    builder.Append(parameters[0].Value);
+                }
+                foreach (var param in parameters.Skip(1))
+                {
+                    builder.Append("," + param.Value);
+                }
+                builder.Append(")");
             }
-            foreach (var param in parameters.Skip(1))
-            {
-                builder.Append("," + param.Value);
-            }
-            builder.Append(")");
             return builder.ToString();
         }
 
