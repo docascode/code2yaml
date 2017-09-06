@@ -61,14 +61,15 @@
     </returns>
   </xsl:template>
 
-  <xsl:template match="ref[normalize-space(@refid)]">
+  <xsl:template match="ref">
     <xref>
-      <xsl:attribute name="href">
+      <xsl:attribute name="uid">
         <xsl:value-of select="@refid"/>
       </xsl:attribute>
       <xsl:attribute name="data-throw-if-not-resolved">
         <xsl:text>false</xsl:text>
       </xsl:attribute>
+      <xsl:value-of select="current()"/>
     </xref>
   </xsl:template>
 
