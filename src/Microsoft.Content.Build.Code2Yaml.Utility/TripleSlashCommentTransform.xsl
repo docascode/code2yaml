@@ -6,6 +6,56 @@
 
   <xsl:output method="xml" indent="yes" encoding="UTF-8" />
 
+  <xsl:template match="bold">
+    <b>
+      <xsl:apply-templates />
+    </b>
+  </xsl:template>
+
+  <xsl:template match="emphasis">
+    <em>
+      <xsl:apply-templates />
+    </em>
+  </xsl:template>
+
+  <xsl:template match="preformatted">
+    <pre>
+      <xsl:apply-templates />
+    </pre>
+  </xsl:template>
+
+  <xsl:template match="subscript">
+    <sub>
+      <xsl:apply-templates />
+    </sub>
+  </xsl:template>
+
+  <xsl:template match="superscript">
+    <sup>
+      <xsl:apply-templates />
+    </sup>
+  </xsl:template>
+
+  <xsl:template match="programlisting">
+    <code>
+      <xsl:apply-templates />
+    </code>
+  </xsl:template>
+
+  <xsl:template match="codeline">
+    <xsl:apply-templates />
+    <xsl:text>
+    </xsl:text>
+  </xsl:template>
+
+  <xsl:template match="highlight">
+    <xsl:apply-templates />
+  </xsl:template>
+
+  <xsl:template match="sp">
+    <xsl:text>&#160;</xsl:text>
+  </xsl:template>
+
   <xsl:template match="para">
     <p>
       <xsl:apply-templates />
