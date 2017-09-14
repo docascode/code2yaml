@@ -14,6 +14,7 @@ Actually the Maven **source** package is a zip file containing all `.java` sourc
 ```json
 {
   "input_path_maven": [ "./azure-batch-2.1.0-sources.jar" ],
+  "output_path": "./output",
   "language": "java"
 }
 ```
