@@ -6,7 +6,7 @@ This tool supports generating document from Java source code before, but it has 
 1. Test code should be excluded explicitly in configuration. Document of test cases makes no sense for end users.
 2. Publishing from latest source code may mismatch with already published package.
 
-In Java world, packages are usually published using [Maven](https://maven.apache.org/index.html), to [Maven repository](https://search.maven.org/#search%7Cga%7C1%7C). To address the above problems, code2yaml also supports generating YAMLs from `.jar` Maven package directly.
+In Java world, packages are usually published using [Maven](https://maven.apache.org/index.html), to [Maven repository](https://search.maven.org/). To address the above problems, code2yaml also supports generating YAMLs from `.jar` Maven package directly.
 
 Actually the Maven **source** package is a zip file containing all `.java` source codes.
 
@@ -18,7 +18,7 @@ Actually the Maven **source** package is a zip file containing all `.java` sourc
   "language": "java"
 }
 ```
-When configured, this tool will build all `.java` source code in this `.jar` file. This jar file can be download by clicking `sources.jar` in Maven repository.
+When configured, this tool will build all `.java` source code in this `source.jar` file. If an project contains only `jar` but not `source.jar`, it can only use `input_path` to generate document.
 
 Note that the key `input_path` can also exist when `input_path_maven` exists. All the referenced source code will be built. However, please ensure not to include the same source code twice in both `input_path` and `input_path_maven`.
 
@@ -34,7 +34,11 @@ To make the git information appear in YAMLs, the fowllowing steps is required:
     * `/scm/tag`
   The definition of these keys can be found [here](https://maven.apache.org/pom.html#SCM).
 
-With this side by side `.xml`, code2yaml will try matching the source code in `.jar` with files in git repo. Git information will be generated if there's a sucessful match. Otherwise, no git information will be generated even the `pom.xml` is provided.
+With this side by side `.xml`, code2yaml will try matching the source code in `.jar` with files in git repo:
+1. Find the `pom.xml` in repo with the same `groupId:artifactId:version`.
+2. Add files under matched `pom.xml` to build scope if source code file is matched.
+
+Git information will be generated if there's a sucessful match. Otherwise, no git information will be generated even the `pom.xml` is provided.
 
 # What if the required keys is missing in `pom.xml`
 A modified or even fake `pom.xml` is also acceptable as long as the required keys have correct value.
