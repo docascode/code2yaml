@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\shared\base.props" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -8,44 +7,12 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Microsoft.Content.Build.Code2Yaml.DeclarationGenerator</RootNamespace>
     <AssemblyName>Microsoft.Content.Build.Code2Yaml.DeclarationGenerator</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFramework>net452</TargetFramework>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.Constants\Microsoft.Content.Build.Code2Yaml.Constants.csproj" />
+    <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.DataContracts\Microsoft.Content.Build.Code2Yaml.DataContracts.csproj" />
+    <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.Utility\Microsoft.Content.Build.Code2Yaml.Utility.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CppDeclarationGenerator.cs" />
-    <Compile Include="DeclarationGenerator.cs" />
-    <Compile Include="JavaDeclarationGenerator.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.Constants\Microsoft.Content.Build.Code2Yaml.Constants.csproj">
-      <Project>{e673948d-9bea-4e3c-b2de-e0b3b3986567}</Project>
-      <Name>Microsoft.Content.Build.Code2Yaml.Constants</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.DataContracts\Microsoft.Content.Build.Code2Yaml.DataContracts.csproj">
-      <Project>{7ac0d45f-dc75-4129-a43b-f0013dcbefe0}</Project>
-      <Name>Microsoft.Content.Build.Code2Yaml.DataContracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.Utility\Microsoft.Content.Build.Code2Yaml.Utility.csproj">
-      <Project>{8f190b33-e157-47f1-8e71-d5d1d5c571fa}</Project>
-      <Name>Microsoft.Content.Build.Code2Yaml.Utility</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

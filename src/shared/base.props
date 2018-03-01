@@ -1,5 +1,4 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +9,7 @@
     <!-- Note: unless explicitly specified, we will generate DLL -->
     <OutputType Condition=" '$(OutputType)' == '' ">Library</OutputType>
     <Prefer32Bit>false</Prefer32Bit>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFramework>net452</TargetFramework>
     <RestorePackages Condition=" '$(RestorePackages)' == '' ">true</RestorePackages>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
