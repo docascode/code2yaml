@@ -1,27 +1,33 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "code2yaml", "src\code2yaml\code2yaml.csproj", "{44F292D7-3964-4C42-9A58-2FADB24E3ABE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.Common", "src\Microsoft.Content.Build.Code2Yaml.Common\Microsoft.Content.Build.Code2Yaml.Common.csproj", "{D0068B20-25E1-4634-A6F5-394B817E1995}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Content.Build.Code2Yaml.Common", "src\Microsoft.Content.Build.Code2Yaml.Common\Microsoft.Content.Build.Code2Yaml.Common.csproj", "{D0068B20-25E1-4634-A6F5-394B817E1995}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.DataContracts", "src\Microsoft.Content.Build.Code2Yaml.DataContracts\Microsoft.Content.Build.Code2Yaml.DataContracts.csproj", "{7AC0D45F-DC75-4129-A43B-F0013DCBEFE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Content.Build.Code2Yaml.DataContracts", "src\Microsoft.Content.Build.Code2Yaml.DataContracts\Microsoft.Content.Build.Code2Yaml.DataContracts.csproj", "{7AC0D45F-DC75-4129-A43B-F0013DCBEFE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.Constants", "src\Microsoft.Content.Build.Code2Yaml.Constants\Microsoft.Content.Build.Code2Yaml.Constants.csproj", "{E673948D-9BEA-4E3C-B2DE-E0B3B3986567}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Content.Build.Code2Yaml.Constants", "src\Microsoft.Content.Build.Code2Yaml.Constants\Microsoft.Content.Build.Code2Yaml.Constants.csproj", "{E673948D-9BEA-4E3C-B2DE-E0B3B3986567}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.ArticleGenerator", "src\Microsoft.Content.Build.Code2Yaml.ArticleGenerator\Microsoft.Content.Build.Code2Yaml.ArticleGenerator.csproj", "{887D8AFF-E901-4024-B0B7-22D90C526ED4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Content.Build.Code2Yaml.ArticleGenerator", "src\Microsoft.Content.Build.Code2Yaml.ArticleGenerator\Microsoft.Content.Build.Code2Yaml.ArticleGenerator.csproj", "{887D8AFF-E901-4024-B0B7-22D90C526ED4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.DeclarationGenerator", "src\Microsoft.Content.Build.Code2Yaml.DeclarationGenerator\Microsoft.Content.Build.Code2Yaml.DeclarationGenerator.csproj", "{B28AD1A8-6C6A-4BD8-B8FF-4F2BD26C34B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Content.Build.Code2Yaml.DeclarationGenerator", "src\Microsoft.Content.Build.Code2Yaml.DeclarationGenerator\Microsoft.Content.Build.Code2Yaml.DeclarationGenerator.csproj", "{B28AD1A8-6C6A-4BD8-B8FF-4F2BD26C34B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.Doxyfile", "src\Microsoft.Content.Build.Code2Yaml.Doxyfile\Microsoft.Content.Build.Code2Yaml.Doxyfile.csproj", "{ED8F63AC-8209-4059-AA8F-E1AE3FB411E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Content.Build.Code2Yaml.Doxyfile", "src\Microsoft.Content.Build.Code2Yaml.Doxyfile\Microsoft.Content.Build.Code2Yaml.Doxyfile.csproj", "{ED8F63AC-8209-4059-AA8F-E1AE3FB411E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.NameGenerator", "src\Microsoft.Content.Build.Code2Yaml.NameGenerator\Microsoft.Content.Build.Code2Yaml.NameGenerator.csproj", "{4C930875-4572-49FC-8836-CE6222695653}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Content.Build.Code2Yaml.NameGenerator", "src\Microsoft.Content.Build.Code2Yaml.NameGenerator\Microsoft.Content.Build.Code2Yaml.NameGenerator.csproj", "{4C930875-4572-49FC-8836-CE6222695653}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.Utility", "src\Microsoft.Content.Build.Code2Yaml.Utility\Microsoft.Content.Build.Code2Yaml.Utility.csproj", "{8F190B33-E157-47F1-8E71-D5D1D5C571FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Content.Build.Code2Yaml.Utility", "src\Microsoft.Content.Build.Code2Yaml.Utility\Microsoft.Content.Build.Code2Yaml.Utility.csproj", "{8F190B33-E157-47F1-8E71-D5D1D5C571FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Content.Build.Code2Yaml.Steps", "src\Microsoft.Content.Build.Code2Yaml.Steps\Microsoft.Content.Build.Code2Yaml.Steps.csproj", "{9C4E0225-26C7-460A-B288-F3C7B5B78484}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Content.Build.Code2Yaml.Steps", "src\Microsoft.Content.Build.Code2Yaml.Steps\Microsoft.Content.Build.Code2Yaml.Steps.csproj", "{9C4E0225-26C7-460A-B288-F3C7B5B78484}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{855F1227-E623-4CC6-9D4A-6EB26848BEA3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{BCC4ED33-A7D3-4FEB-80CB-FE6BD1821B07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "code2yaml.Tests", "test\code2yaml.Tests\code2yaml.Tests.csproj", "{00F67BF1-470B-4140-8C58-899CB563B9DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,8 +75,28 @@ Global
 		{9C4E0225-26C7-460A-B288-F3C7B5B78484}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C4E0225-26C7-460A-B288-F3C7B5B78484}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C4E0225-26C7-460A-B288-F3C7B5B78484}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00F67BF1-470B-4140-8C58-899CB563B9DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00F67BF1-470B-4140-8C58-899CB563B9DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00F67BF1-470B-4140-8C58-899CB563B9DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00F67BF1-470B-4140-8C58-899CB563B9DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{44F292D7-3964-4C42-9A58-2FADB24E3ABE} = {855F1227-E623-4CC6-9D4A-6EB26848BEA3}
+		{D0068B20-25E1-4634-A6F5-394B817E1995} = {855F1227-E623-4CC6-9D4A-6EB26848BEA3}
+		{7AC0D45F-DC75-4129-A43B-F0013DCBEFE0} = {855F1227-E623-4CC6-9D4A-6EB26848BEA3}
+		{E673948D-9BEA-4E3C-B2DE-E0B3B3986567} = {855F1227-E623-4CC6-9D4A-6EB26848BEA3}
+		{887D8AFF-E901-4024-B0B7-22D90C526ED4} = {855F1227-E623-4CC6-9D4A-6EB26848BEA3}
+		{B28AD1A8-6C6A-4BD8-B8FF-4F2BD26C34B6} = {855F1227-E623-4CC6-9D4A-6EB26848BEA3}
+		{ED8F63AC-8209-4059-AA8F-E1AE3FB411E9} = {855F1227-E623-4CC6-9D4A-6EB26848BEA3}
+		{4C930875-4572-49FC-8836-CE6222695653} = {855F1227-E623-4CC6-9D4A-6EB26848BEA3}
+		{8F190B33-E157-47F1-8E71-D5D1D5C571FA} = {855F1227-E623-4CC6-9D4A-6EB26848BEA3}
+		{9C4E0225-26C7-460A-B288-F3C7B5B78484} = {855F1227-E623-4CC6-9D4A-6EB26848BEA3}
+		{00F67BF1-470B-4140-8C58-899CB563B9DA} = {BCC4ED33-A7D3-4FEB-80CB-FE6BD1821B07}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {53B46167-3D16-4A99-AB27-2D9EC00EDB6B}
 	EndGlobalSection
 EndGlobal

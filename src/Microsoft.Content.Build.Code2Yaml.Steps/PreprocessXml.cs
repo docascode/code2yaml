@@ -59,7 +59,7 @@
             Directory.EnumerateFiles(inputPath, "*.xml").AsParallel().ForAll(
                 p =>
                 {
-                    var content = File.ReadAllText(p, Encoding.Default);
+                    var content = File.ReadAllText(p, Encoding.UTF8);
                     content = TemplateLeftTagRegex.Replace(content, "$1");
                     content = TemplateRightTagRegex.Replace(content, "$1");
                     XDocument doc = XDocument.Parse(content);
