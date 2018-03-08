@@ -62,7 +62,7 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             var outputPath = Path.Combine(outputFolder, "com.mycompany.app._app.yml");
             Assert.True(File.Exists(outputPath));
             var model = YamlUtility.Deserialize<PageModel>(outputPath);
-            Assert.Equal(2, model.Items.Count);
+            Assert.Equal(3, model.Items.Count);
 
             Assert.Equal(MemberType.Class, model.Items[0].Type);
             Assert.Equal("com.mycompany.app.App", model.Items[0].FullName);
@@ -72,6 +72,9 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             Assert.Equal(MemberType.Method, model.Items[1].Type);
             Assert.Equal("main(String[] args)", model.Items[1].Name);
             Assert.Equal("<p>Main's summary </p>", model.Items[1].Summary);
+
+            Assert.Equal(MemberType.Method, model.Items[2].Type);
+            Assert.Equal("<p>Test a list:<ul><li><p>first item</p></li><li><p>second item </p></li></ul></p>", model.Items[2].Summary);
         }
 
         public void Dispose()

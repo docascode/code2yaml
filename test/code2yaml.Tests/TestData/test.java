@@ -10,4 +10,12 @@ public class App {
     public static void main(String[] args) {
         System.out.println("Hello World!");
     }
+
+    /**
+     * Test a list:
+     * - first item
+     * - second item
+     */
+    public void testCommentsWithList() {
+    }
 }

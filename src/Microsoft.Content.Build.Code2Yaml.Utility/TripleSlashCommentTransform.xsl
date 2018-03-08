@@ -6,6 +6,18 @@
 
   <xsl:output method="xml" indent="yes" encoding="UTF-8" />
 
+  <xsl:template match="itemizedlist">
+    <ul>
+      <xsl:apply-templates />
+    </ul>
+  </xsl:template>
+
+  <xsl:template match="listitem">
+    <li>
+      <xsl:apply-templates />
+    </li>
+  </xsl:template>
+
   <xsl:template match="bold">
     <b>
       <xsl:apply-templates />
