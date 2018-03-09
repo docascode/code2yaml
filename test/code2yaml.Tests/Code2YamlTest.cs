@@ -62,19 +62,28 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             var outputPath = Path.Combine(outputFolder, "com.mycompany.app._app.yml");
             Assert.True(File.Exists(outputPath));
             var model = YamlUtility.Deserialize<PageModel>(outputPath);
-            Assert.Equal(3, model.Items.Count);
+            Assert.Equal(4, model.Items.Count);
 
-            Assert.Equal(MemberType.Class, model.Items[0].Type);
-            Assert.Equal("com.mycompany.app.App", model.Items[0].FullName);
-            Assert.Equal("App", model.Items[0].Name);
-            Assert.Equal("<p>\n\n  <xref uid=\"com.mycompany.app._app\" data-throw-if-not-resolved=\"false\">App</xref>'s summary </p>", model.Items[0].Summary);
+            var item = model.Items.Find(i => i.Name == "App");
+            Assert.NotNull(item);
+            Assert.Equal(MemberType.Class, item.Type);
+            Assert.Equal("com.mycompany.app.App", item.FullName);
+            Assert.Equal("<p>\n\n  <xref uid=\"com.mycompany.app._app\" data-throw-if-not-resolved=\"false\">App</xref>'s summary </p>", item.Summary);
 
-            Assert.Equal(MemberType.Method, model.Items[1].Type);
-            Assert.Equal("main(String[] args)", model.Items[1].Name);
-            Assert.Equal("<p>Main's summary </p>", model.Items[1].Summary);
+            item = model.Items.Find(i => i.Name == "main(String[] args)");
+            Assert.NotNull(item);
+            Assert.Equal(MemberType.Method, item.Type);
+            Assert.Equal("<p>Main's summary, continued from the line above </p>\n<p>It needs a `</p>\n<p>` to start another line </p>", item.Summary.Replace("\r\n", "\n"));
 
-            Assert.Equal(MemberType.Method, model.Items[2].Type);
-            Assert.Equal("<p>Test a list:<ul><li><p>first item</p></li><li><p>second item </p></li></ul></p>", model.Items[2].Summary);
+            item = model.Items.Find(i => i.Name == "testCommentsWithList()");
+            Assert.NotNull(item);
+            Assert.Equal(MemberType.Method, item.Type);
+            Assert.Equal("<p>Test a list:<ul><li><p>first item</p></li><li><p>second item </p></li></ul></p>", item.Summary);
+
+            item = model.Items.Find(i => i.Name == "testCommentsWithApiNote()");
+            Assert.NotNull(item);
+            Assert.Equal(MemberType.Method, item.Type);
+            Assert.Equal("## examples<br />\n Here is a sample code:<br />\n [!code-java[Sample](~/sample/test.java) ", item.Remarks.Replace("\r\n", "\n"));
         }
 
         public void Dispose()

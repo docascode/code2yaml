@@ -63,6 +63,7 @@
             mainYaml.Parent = curChange.Parent;
             mainYaml.Children = curChange.Children != null ? new List<string>(curChange.Children.OrderBy(c => c)) : new List<string>();
             FillSummary(mainYaml, main);
+            FillRemarks(mainYaml, main);
             FillSource(mainYaml, main);
             FillSees(mainYaml, main);
             FillException(mainYaml, main);
@@ -91,6 +92,7 @@
                         memberYaml.Type = string.IsNullOrEmpty(member.NullableElement("type").NullableValue()) && tuple.Item1.Value == MemberType.Method ? MemberType.Constructor : tuple.Item1.Value;
                         memberYaml.Parent = mainYaml.Uid;
                         FillSummary(memberYaml, member);
+                        FillRemarks(memberYaml, member);
                         FillSource(memberYaml, member);
                         FillSees(memberYaml, member);
                         FillException(memberYaml, member);
@@ -189,6 +191,20 @@
             if (yaml.Summary == string.Empty)
             {
                 yaml.Summary = null;
+            }
+        }
+
+        protected void FillRemarks(ArticleItemYaml yaml, XElement node)
+        {
+            var par = node.XPathSelectElement("detaileddescription/para/simplesect[@kind='par']");
+            if (par?.NullableInnerXml()?.StartsWith("<title>API Note:</title>") != true)
+            {
+                return;
+            }
+            yaml.Remarks = node.XPathSelectElement("detaileddescription/para/simplesect[@kind='par']/para").NullableInnerXml();
+            if (yaml.Remarks == string.Empty)
+            {
+                yaml.Remarks = null;
             }
         }
 
