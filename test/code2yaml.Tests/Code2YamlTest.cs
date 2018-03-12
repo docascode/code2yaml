@@ -68,7 +68,7 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             Assert.NotNull(item);
             Assert.Equal(MemberType.Class, item.Type);
             Assert.Equal("com.mycompany.app.App", item.FullName);
-            Assert.Equal("<p>\n\n  <xref uid=\"com.mycompany.app._app\" data-throw-if-not-resolved=\"false\">App</xref>'s summary </p>", item.Summary);
+            Assert.Equal("<p>\n\n  <xref uid=\"com.mycompany.app._app\" data-throw-if-not-resolved=\"false\">App</xref>'s summary </p>", item.Summary.Replace("\r\n", "\n"));
 
             item = model.Items.Find(i => i.Name == "main(String[] args)");
             Assert.NotNull(item);
@@ -78,7 +78,7 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             item = model.Items.Find(i => i.Name == "testCommentsWithList()");
             Assert.NotNull(item);
             Assert.Equal(MemberType.Method, item.Type);
-            Assert.Equal("<p>Test a list:<ul><li><p>first item</p></li><li><p>second item </p></li></ul></p>", item.Summary);
+            Assert.Equal("<p>Test a list:<ul><li><p>first item</p></li><li><p>second item </p></li></ul></p>", item.Summary.Replace("\r\n", "\n"));
 
             item = model.Items.Find(i => i.Name == "testCommentsWithApiNote()");
             Assert.NotNull(item);
