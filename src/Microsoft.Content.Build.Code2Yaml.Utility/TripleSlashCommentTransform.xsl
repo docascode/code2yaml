@@ -230,7 +230,6 @@
   </xsl:template>
 
   <xsl:template match="linebreak">
-    <br/>
   </xsl:template>
 
   <xsl:template match="@*|node()">

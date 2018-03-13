@@ -25,9 +25,9 @@ public class App {
     /**
      * The **apiNote** section should be extracted into **remarks** property
      * @apiNote
-     *   ## examples\n
-     *   Here is a sample code:\n
-     *   [!code-java[Sample](~/sample/test.java)]
+     *  ## examples\n
+	 *  Here is a sample code:\n
+	 *  [!code-java[Sample](~/sample/test.java)]
      */
     public void testCommentsWithApiNote() {
     }
