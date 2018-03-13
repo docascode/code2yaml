@@ -27,7 +27,7 @@ public class App {
      * @apiNote
      *   ## examples\n
      *   Here is a sample code:\n
-     *   [!code-java[Sample](~/sample/test.java)
+     *   [!code-java[Sample](~/sample/test.java)]
      */
     public void testCommentsWithApiNote() {
     }
