@@ -197,11 +197,11 @@
         protected void FillRemarks(ArticleItemYaml yaml, XElement node)
         {
             var par = node.XPathSelectElement("detaileddescription/para/simplesect[@kind='par']");
-            if (par?.NullableInnerXml()?.StartsWith("<title>API Note:</title>") != true)
+            if (par?.NullableInnerXmlRemoveBr()?.StartsWith("<title>API Note:</title>") != true)
             {
                 return;
             }
-            yaml.Remarks = node.XPathSelectElement("detaileddescription/para/simplesect[@kind='par']/para").NullableInnerXml();
+            yaml.Remarks = node.XPathSelectElement("detaileddescription/para/simplesect[@kind='par']/para").NullableInnerXmlRemoveBr();
             if (yaml.Remarks == string.Empty)
             {
                 yaml.Remarks = null;

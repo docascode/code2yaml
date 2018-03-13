@@ -12,6 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="TripleSlashCommentTransform.xsl" />
+    <EmbeddedResource Include="TripleSlashCommentTransformRemoveBr.xsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.Common\Microsoft.Content.Build.Code2Yaml.Common.csproj" />

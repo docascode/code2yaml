@@ -31,4 +31,12 @@ public class App {
      */
     public void testCommentsWithApiNote() {
     }
+
+    /**
+     * This is first line.
+     * <br>
+     * This is second line.
+     */
+    public void testCommentsWithBr() {
+    }
 }

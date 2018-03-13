@@ -13,10 +13,21 @@
         private readonly XslCompiledTransform _transform;
 
         public TripleSlashCommentTransformer()
+            : this(new TripleSlashCommentTransformerParameters()) { }
+
+        public TripleSlashCommentTransformer(TripleSlashCommentTransformerParameters parameters)
         {
             var type = this.GetType();
             var assembly = type.Assembly;
-            var xsltFilePath = $"{type.Namespace}.TripleSlashCommentTransform.xsl";
+            string xsltFilePath;
+            if (parameters.RemoveBr)
+            {
+                xsltFilePath = $"{type.Namespace}.TripleSlashCommentTransformRemoveBr.xsl";
+            }
+            else
+            {
+                xsltFilePath = $"{type.Namespace}.TripleSlashCommentTransform.xsl";
+            }
             using (var stream = assembly.GetManifestResourceStream(xsltFilePath))
             using (var reader = XmlReader.Create(stream))
             {

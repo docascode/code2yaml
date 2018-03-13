@@ -8,6 +8,8 @@
         private static XElement _nullElement = new XElement("Null");
         private static XAttribute _nullAttribute = new XAttribute("Null", string.Empty);
         private static readonly TripleSlashCommentTransformer _transformer = new TripleSlashCommentTransformer();
+        private static readonly TripleSlashCommentTransformer _transformerRemoveBr
+            = new TripleSlashCommentTransformer(new TripleSlashCommentTransformerParameters { RemoveBr = true });
 
         public static XElement NullableElement(this XContainer element, string name)
         {
@@ -27,6 +29,11 @@
         public static string NullableInnerXml(this XElement element)
         {
             return element.Value == string.Empty ? null : _transformer.Transform(element).CreateNavigator().InnerXml;
+        }
+
+        public static string NullableInnerXmlRemoveBr(this XElement element)
+        {
+            return element.Value == string.Empty ? null : _transformerRemoveBr.Transform(element).CreateNavigator().InnerXml;
         }
 
         public static string NullableValue(this XAttribute attribute)
