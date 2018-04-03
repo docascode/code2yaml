@@ -83,7 +83,10 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             item = model.Items.Find(i => i.Name == "testCommentsWithApiNote()");
             Assert.NotNull(item);
             Assert.Equal(MemberType.Method, item.Type);
-            Assert.Equal("## examples\n Here is a sample code:\n [!code-java[Sample](~/sample/test.java)] ", item.Remarks.Replace("\r\n", "\n"));
+            Assert.Equal(@"## examples
+Here is a sample code:
+[!code-java[Sample_Code](~/_sample/APITests.java?name={Sample_code1} ""Sample for ContainerURL.create"")] ".Replace("\r\n", "\n"),
+item.Remarks.Replace("\r\n", "\n"));
 
             item = model.Items.Find(i => i.Name == "testCommentsWithBr()");
             Assert.NotNull(item);
