@@ -39,4 +39,11 @@ public class App {
      */
     public void testCommentsWithBr() {
     }
+
+    /**
+     * Test external link. See:
+     * <a href="https://dotnet.github.io/docfx/">DocFX</a>
+     */
+    public void testCommentsWithExternalLink() {
+    }
 }

@@ -62,7 +62,7 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             var outputPath = Path.Combine(outputFolder, "com.mycompany.app._app.yml");
             Assert.True(File.Exists(outputPath));
             var model = YamlUtility.Deserialize<PageModel>(outputPath);
-            Assert.Equal(5, model.Items.Count);
+            Assert.Equal(6, model.Items.Count);
 
             var item = model.Items.Find(i => i.Name == "App");
             Assert.NotNull(item);
@@ -92,6 +92,11 @@ item.Remarks.Replace("\r\n", "\n"));
             Assert.NotNull(item);
             Assert.Equal(MemberType.Method, item.Type);
             Assert.Equal("<p>This is first line. <br />\n\n This is second line. </p>", item.Summary.Replace("\r\n", "\n"));
+
+            item = model.Items.Find(i => i.Name == "testCommentsWithExternalLink()");
+            Assert.NotNull(item);
+            Assert.Equal(MemberType.Method, item.Type);
+            Assert.Equal("<p>Test external link. See: <a href=\"https://dotnet.github.io/docfx/\">DocFX</a></p>", item.Summary);
         }
 
         public void Dispose()

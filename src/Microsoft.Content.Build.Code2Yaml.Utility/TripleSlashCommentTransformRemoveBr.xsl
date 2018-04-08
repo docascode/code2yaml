@@ -123,6 +123,15 @@
     </returns>
   </xsl:template>
 
+  <xsl:template match="ulink">
+    <a>
+      <xsl:attribute name="href">
+        <xsl:value-of select="@url"/>
+      </xsl:attribute>
+      <xsl:value-of select="current()"/>
+    </a>
+  </xsl:template>
+
   <xsl:template match="ref">
     <xref>
       <xsl:attribute name="uid">
