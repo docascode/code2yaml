@@ -31,9 +31,7 @@
   </xsl:template>
 
   <xsl:template match="preformatted">
-    <pre>
       <xsl:apply-templates />
-    </pre>
   </xsl:template>
 
   <xsl:template match="subscript">
