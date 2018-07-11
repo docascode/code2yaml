@@ -46,4 +46,20 @@ public class App {
      */
     public void testCommentsWithExternalLink() {
     }
+
+    /**
+     * @apiNote
+     * <pre>
+     * Use pre help keep the indentation in code snippet whithin apiNote
+     * ```Java\n
+     * // No indentation for line 1 and 2\n
+     * public void checkIndentation() {\n
+     *     // 4 spaces indentation
+	 *         // 8 spaces indentation
+     * }\n
+     * ```\n
+     * </pre>
+     */
+    public void testIndentationWithPre() {
+    }
 }
