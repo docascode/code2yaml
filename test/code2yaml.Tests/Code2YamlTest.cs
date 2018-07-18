@@ -101,8 +101,7 @@ item.Remarks.Replace("\r\n", "\n"));
             item = model.Items.Find(i => i.Name == "testIndentationWithPre()");
             Assert.NotNull(item);
             Assert.Equal(MemberType.Method, item.Type);
-            Assert.Equal(@"
-Use pre help keep the indentation in code snippet whithin apiNote
+            Assert.Equal(@"Use pre help keep the indentation in code snippet whithin apiNote 
 ```Java
 // No indentation for line 1 and 2
 public void checkIndentation() {
