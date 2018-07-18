@@ -55,7 +55,7 @@ public class App {
      * // No indentation for line 1 and 2\n
      * public void checkIndentation() {\n
      *     // 4 spaces indentation
-	 *         // 8 spaces indentation
+    *         // 8 spaces indentation
      * }\n
      * ```\n
      * </pre>
