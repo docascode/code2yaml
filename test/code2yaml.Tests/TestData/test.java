@@ -1,7 +1,7 @@
 ﻿package com.mycompany.app;
 
 /**
- * App's summary
+ * App's summary\n Escape auto link for App with `%`: %App
  */
 public class App {
     /**
@@ -61,5 +61,15 @@ public class App {
      * </pre>
      */
     public void testIndentationWithPre() {
+    }
+
+    /**
+     * @apiNote
+     * >[!NOTE]
+     * > Here is a Note with a list below:
+     * - item 1
+     * - item 2
+     */
+    public void testNOTEFormat() {
     }
 }

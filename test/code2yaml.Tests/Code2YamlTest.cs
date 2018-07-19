@@ -62,13 +62,13 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             var outputPath = Path.Combine(outputFolder, "com.mycompany.app._app.yml");
             Assert.True(File.Exists(outputPath));
             var model = YamlUtility.Deserialize<PageModel>(outputPath);
-            Assert.Equal(7, model.Items.Count);
+            Assert.Equal(8, model.Items.Count);
 
             var item = model.Items.Find(i => i.Name == "App");
             Assert.NotNull(item);
             Assert.Equal(MemberType.Class, item.Type);
             Assert.Equal("com.mycompany.app.App", item.FullName);
-            Assert.Equal("<p>\n\n  <xref uid=\"com.mycompany.app._app\" data-throw-if-not-resolved=\"false\">App</xref>'s summary </p>", item.Summary.Replace("\r\n", "\n"));
+            Assert.Equal("<p>\n\n  <xref uid=\"com.mycompany.app._app\" data-throw-if-not-resolved=\"false\">App</xref>'s summary<br />\n\n Escape auto link for <xref uid=\"com.mycompany.app._app\" data-throw-if-not-resolved=\"false\">App</xref> with `%`: App </p>", item.Summary.Replace("\r\n", "\n"));
 
             item = model.Items.Find(i => i.Name == "main(String[] args)");
             Assert.NotNull(item);
@@ -109,6 +109,11 @@ public void checkIndentation() {
         // 8 spaces indentation
 }
 ```".Replace("\r\n", "\n"), item.Remarks.Replace("\r\n", "\n"));
+
+            item = model.Items.Find(i => i.Name == "testNOTEFormat()");
+            Assert.NotNull(item);
+            Assert.Equal(MemberType.Method, item.Type);
+            Assert.Equal(@">[!NOTE]> Here is a Note with a list below:<ul><li><p>item 1</p></li><li><p>item 2 </p></li></ul>", item.Remarks);
         }
 
         public void Dispose()
