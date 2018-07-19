@@ -188,7 +188,7 @@
 
         protected void FillSummary(ArticleItemYaml yaml, XElement node)
         {
-            yaml.Summary = node.NullableElement("briefdescription").NullableInnerXml() + ParseSummaryFromDetailedDescription(node.NullableElement("detaileddescription"));
+            yaml.Summary = WebUtility.HtmlDecode(node.NullableElement("briefdescription").NullableInnerXml() + ParseSummaryFromDetailedDescription(node.NullableElement("detaileddescription")));
             if (yaml.Summary == string.Empty)
             {
                 yaml.Summary = null;

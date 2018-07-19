@@ -1,7 +1,7 @@
 ﻿package com.mycompany.app;
 
 /**
- * App's summary\n Escape auto link for App with `%`: %App
+ * App's summary
  */
 public class App {
     /**
@@ -71,5 +71,16 @@ public class App {
      * - item 2
      */
     public void testNOTEFormat() {
+    }
+
+    /**
+     * Test encode in summary: `<`, `>`
+     * @apiNote
+     * In remarks: `<`, `>` \n
+     * ```Java\n
+     * //In code snippet: `<`, `>`\n
+     * ```\n
+     */
+    public void testEncode() {
     }
 }
