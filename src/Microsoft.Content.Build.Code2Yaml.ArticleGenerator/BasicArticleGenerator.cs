@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Net;
     using System.Linq;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
@@ -188,7 +187,7 @@
 
         protected void FillSummary(ArticleItemYaml yaml, XElement node)
         {
-            yaml.Summary = WebUtility.HtmlDecode(node.NullableElement("briefdescription").NullableInnerXml() + ParseSummaryFromDetailedDescription(node.NullableElement("detaileddescription")));
+            yaml.Summary = node.NullableElement("briefdescription").NullableInnerXml() + ParseSummaryFromDetailedDescription(node.NullableElement("detaileddescription"));
             if (yaml.Summary == string.Empty)
             {
                 yaml.Summary = null;
@@ -202,7 +201,7 @@
             {
                 return;
             }
-            yaml.Remarks = WebUtility.HtmlDecode(node.XPathSelectElement("detaileddescription/para/simplesect[@kind='par']/para").NullableInnerXmlRemoveBr());
+            yaml.Remarks = node.XPathSelectElement("detaileddescription/para/simplesect[@kind='par']/para").NullableInnerXmlRemoveBr();
             if (yaml.Remarks == string.Empty)
             {
                 yaml.Remarks = null;
