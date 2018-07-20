@@ -62,4 +62,25 @@ public class App {
      */
     public void testIndentationWithPre() {
     }
+
+    /**
+     * @apiNote
+     * >[!NOTE]
+     * Here is a Note with a list below:
+     * - item 1
+     * - item 2
+     */
+    public void testNOTEFormat() {
+    }
+
+    /**
+     * Not decoded for summary: `<`, `>`
+     * @apiNote
+     * Decoded in remarks: `<`, `>`\n
+     * ```Java\n
+     * //Decoded in code snippet of remarks: `<`, `>`\n
+     * ```\n
+     */
+    public void testEncode() {
+    }
 }
