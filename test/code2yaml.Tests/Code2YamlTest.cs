@@ -113,7 +113,7 @@ public void checkIndentation() {
             item = model.Items.Find(i => i.Name == "testNOTEFormat()");
             Assert.NotNull(item);
             Assert.Equal(MemberType.Method, item.Type);
-            Assert.Equal(@">[!NOTE]> Here is a Note with a list below:<ul><li><p>item 1</p></li><li><p>item 2 </p></li></ul>", item.Remarks);
+            Assert.Equal(@">[!NOTE] Here is a Note with a list below:<ul><li><p>item 1</p></li><li><p>item 2 </p></li></ul>", item.Remarks);
 
             item = model.Items.Find(i => i.Name == "testEncode()");
             Assert.NotNull(item);

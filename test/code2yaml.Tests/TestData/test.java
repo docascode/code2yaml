@@ -66,7 +66,7 @@ public class App {
     /**
      * @apiNote
      * >[!NOTE]
-     * > Here is a Note with a list below:
+     * Here is a Note with a list below:
      * - item 1
      * - item 2
      */
