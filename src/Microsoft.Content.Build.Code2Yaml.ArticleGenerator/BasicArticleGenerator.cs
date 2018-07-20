@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Xml.Linq;
@@ -201,7 +202,7 @@
             {
                 return;
             }
-            yaml.Remarks = node.XPathSelectElement("detaileddescription/para/simplesect[@kind='par']/para").NullableInnerXmlRemoveBr();
+            yaml.Remarks = WebUtility.HtmlDecode(node.XPathSelectElement("detaileddescription/para/simplesect[@kind='par']/para").NullableInnerXmlRemoveBr());
             if (yaml.Remarks == string.Empty)
             {
                 yaml.Remarks = null;
