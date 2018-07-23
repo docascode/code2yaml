@@ -32,7 +32,10 @@
 
         public override string GenerateMemberFullName(NameGeneratorContext context, XElement node)
         {
-            return YamlUtility.RegularizeName(YamlUtility.ParseMemberName(node.NullableElement("definition").NullableValue(), node.NullableElement("argsstring").NullableValue()), Constants.Dot);
+            string memberDefName = YamlUtility.RegularizeName(YamlUtility.ParseMemberName(node.NullableElement("definition").NullableValue(), node.NullableElement("argsstring").NullableValue()), Constants.Dot);
+            string regularizedCompoundName = YamlUtility.RegularizeName(context.CurrentChange.Name, Constants.Dot);
+            int indexOfMemberFullName = memberDefName.IndexOf(regularizedCompoundName);
+            return String.IsNullOrEmpty(regularizedCompoundName) || String.IsNullOrEmpty(memberDefName) || indexOfMemberFullName == -1 ? memberDefName : memberDefName.Substring(indexOfMemberFullName);
         }
 
         public override string GenerateMemberName(NameGeneratorContext context, XElement node)

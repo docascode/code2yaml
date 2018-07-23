@@ -73,6 +73,7 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             item = model.Items.Find(i => i.Name == "main(String[] args)");
             Assert.NotNull(item);
             Assert.Equal(MemberType.Method, item.Type);
+            Assert.Equal("com.mycompany.app.App.main(String[] args)", item.FullName);
             Assert.Equal("<p>Main's summary, continued from the line above </p>\n<p>It needs a `</p>\n<p>` to start another line </p>", item.Summary.Replace("\r\n", "\n"));
 
             item = model.Items.Find(i => i.Name == "testCommentsWithList()");
