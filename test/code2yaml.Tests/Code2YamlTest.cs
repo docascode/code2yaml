@@ -64,16 +64,17 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             var model = YamlUtility.Deserialize<PageModel>(outputPath);
             Assert.Equal(9, model.Items.Count);
 
-            var item = model.Items.Find(i => i.Name == "App");
+            var item = model.Items.Find(i => i.Name == "App<T>");
             Assert.NotNull(item);
             Assert.Equal(MemberType.Class, item.Type);
-            Assert.Equal("com.mycompany.app.App", item.FullName);
+            Assert.Equal("com.mycompany.app.App<T>", item.FullName);
+            Assert.Equal("T", item.Syntax.TypeParameters[0].Name);
             Assert.Equal("<p>App's summary </p>", item.Summary.Replace("\r\n", "\n"));
 
             item = model.Items.Find(i => i.Name == "main(String[] args)");
             Assert.NotNull(item);
             Assert.Equal(MemberType.Method, item.Type);
-            Assert.Equal("com.mycompany.app.App.main(String[] args)", item.FullName);
+            Assert.Equal("com.mycompany.app.App<T>.main(String[] args)", item.FullName);
             Assert.Equal("<p>Main's summary, continued from the line above </p>\n<p>It needs a `</p>\n<p>` to start another line </p>", item.Summary.Replace("\r\n", "\n"));
 
             item = model.Items.Find(i => i.Name == "testCommentsWithList()");

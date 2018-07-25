@@ -231,6 +231,7 @@
                     p =>
                     new ApiParameter
                     {
+                        Name = p.NullableElement("type").NullableValue(),
                         Type = ParseType(p.NullableElement("type")),
                         Description = ParseParameterDescription(node.NullableElement("detaileddescription"), "<" + p.NullableElement("type").NullableValue() + ">")
                     }).ToList();
