@@ -3,7 +3,7 @@
 /**
  * App's summary
  */
-public class App {
+public class App<T> {
     /**
      * Main's summary,
      * continued from the line above
