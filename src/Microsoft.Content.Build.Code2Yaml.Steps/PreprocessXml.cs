@@ -115,7 +115,7 @@
                 });
 
             // workaround for Doxygen Bug: it generated extra namespace for code `public string namespace(){ return ""; }`.
-            // so if we find namespace which has same name with class, remove it from index file and also remove its file.           
+            // so if we find namespace which has same name with class, remove it from index file and also remove its file.
             string indexFile = Path.Combine(inputPath, Constants.IndexFileName);
             XDocument indexDoc = XDocument.Load(indexFile);
             var duplicateItems = (from ele in indexDoc.Root.Elements("compound")
