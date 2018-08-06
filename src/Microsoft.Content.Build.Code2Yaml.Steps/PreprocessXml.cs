@@ -35,6 +35,7 @@
             @"The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
             @"THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
         };
+        private static IReadOnlyList<string> kindsToEscapeRenameCollection = new List<string> { "file", "dir" };
 
         public string StepName { get { return "Preprocess"; } }
 
@@ -54,6 +55,8 @@
             }
             var dirInfo = Directory.CreateDirectory(processedOutputPath);
 
+            var renamedIds = new ConcurrentDictionary<string, string>();
+   
             // workaround for Doxygen Bug: it generated xml whose encoding is ANSI while the xml meta is encoding='UTF-8'
             // preprocess in string level: fix style for type with template parameter
             Directory.EnumerateFiles(inputPath, "*.xml").AsParallel().ForAll(
@@ -63,8 +66,39 @@
                     content = TemplateLeftTagRegex.Replace(content, "$1");
                     content = TemplateRightTagRegex.Replace(content, "$1");
                     XDocument doc = XDocument.Parse(content);
+
+                    //workaround for Doxygen generates hash for long file name: using regularized compounddef name as file name.
+                    var node = doc.Root.NullableElement("compounddef");                                                         
+                    if (!string.IsNullOrEmpty(node.NullableValue()) && !kindsToEscapeRenameCollection.Contains(node.Attribute("kind").Value))
+                    {
+                        var id = node.Attribute("id").Value;
+                        var formatName = YamlUtility.RegularizeName(node.Attribute("kind").Value + node.NullableElement("compoundname").NullableValue(), Constants.IdSpliter);
+
+                        if (formatName != id)
+                        {
+                            doc.Save(Path.Combine(Path.GetDirectoryName(p), formatName + Path.GetExtension(p)));
+                            renamedIds[id] = formatName;
+                            File.Delete(p);
+                            return;
+                        }
+                    }
                     doc.Save(p);
+
                 });
+
+            //update id and refid which are renamed
+            if (!renamedIds.IsEmpty)
+            {
+                await Directory.EnumerateFiles(inputPath, "*.xml").ForEachInParallelAsync(
+                p =>
+                {
+                    var content = File.ReadAllText(p, Encoding.UTF8);
+                    renamedIds.Keys.OrderByDescending(Key => Key.Length).ToList().ForEach(id => content = content.Replace(id, renamedIds[id]));
+                    XDocument doc = XDocument.Parse(content);
+                    doc.Save(p);
+                    return Task.FromResult(1);
+                });
+            }            
 
             // get friendly uid for members
             var memberUidMapping = new ConcurrentDictionary<string, string>();
@@ -81,7 +115,7 @@
                 });
 
             // workaround for Doxygen Bug: it generated extra namespace for code `public string namespace(){ return ""; }`.
-            // so if we find namespace which has same name with class, remove it from index file and also remove its file.
+            // so if we find namespace which has same name with class, remove it from index file and also remove its file.           
             string indexFile = Path.Combine(inputPath, Constants.IndexFileName);
             XDocument indexDoc = XDocument.Load(indexFile);
             var duplicateItems = (from ele in indexDoc.Root.Elements("compound")

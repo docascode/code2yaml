@@ -83,4 +83,10 @@ public class App<T> {
      */
     public void testEncode() {
     }
+
+    /**
+     * An Inner class to check if hash is corrected in file name and file content.
+     */
+    public class testIfCode2YamlIsCorrectlyConvertFileNameAndIdToRegularizedCompoundNameForLongFileNamesThatWillBeConvertedToHashByDoxygen { 
+    }
 }
