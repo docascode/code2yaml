@@ -55,6 +55,8 @@
             }
             var dirInfo = Directory.CreateDirectory(processedOutputPath);
 
+            var renamedIds = new ConcurrentDictionary<string, string>();
+   
             // workaround for Doxygen Bug: it generated xml whose encoding is ANSI while the xml meta is encoding='UTF-8'
             // preprocess in string level: fix style for type with template parameter
             Directory.EnumerateFiles(inputPath, "*.xml").AsParallel().ForAll(
@@ -64,8 +66,39 @@
                     content = TemplateLeftTagRegex.Replace(content, "$1");
                     content = TemplateRightTagRegex.Replace(content, "$1");
                     XDocument doc = XDocument.Parse(content);
+
+                    //workaround for Doxygen generates hash for long file name: using regularized compounddef name as file name.
+                    var node = doc.Root.NullableElement("compounddef");                                                         
+                    if (!string.IsNullOrEmpty(node.NullableValue()) && !kindsToEscapeRenameCollection.Contains(node.Attribute("kind").Value))
+                    {
+                        var id = node.Attribute("id").Value;
+                        var formatName = YamlUtility.RegularizeName(node.Attribute("kind").Value + node.NullableElement("compoundname").NullableValue(), Constants.IdSpliter);
+
+                        if (formatName != id)
+                        {
+                            doc.Save(Path.Combine(Path.GetDirectoryName(p), formatName + Path.GetExtension(p)));
+                            renamedIds[id] = formatName;
+                            File.Delete(p);
+                            return;
+                        }
+                    }
                     doc.Save(p);
+
                 });
+
+            //update id and refid which are renamed
+            if (!renamedIds.IsEmpty)
+            {
+                await Directory.EnumerateFiles(inputPath, "*.xml").ForEachInParallelAsync(
+                p =>
+                {
+                    var content = File.ReadAllText(p, Encoding.UTF8);
+                    renamedIds.Keys.OrderByDescending(Key => Key.Length).ToList().ForEach(id => content = content.Replace(id, renamedIds[id]));
+                    XDocument doc = XDocument.Parse(content);
+                    doc.Save(p);
+                    return Task.FromResult(1);
+                });
+            }            
 
             // get friendly uid
             var uidMapping = new ConcurrentDictionary<string, string>();

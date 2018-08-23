@@ -59,7 +59,7 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             procedure.RunAsync(context).Wait();
 
             // assert
-            var outputPath = Path.Combine(outputFolder, "com.mycompany.app._app.yml");
+            var outputPath = Path.Combine(outputFolder, "com.mycompany.app.App.yml");
             Assert.True(File.Exists(outputPath));
             var model = YamlUtility.Deserialize<PageModel>(outputPath);
             Assert.Equal(9, model.Items.Count);
@@ -122,6 +122,12 @@ public void checkIndentation() {
             Assert.Equal(MemberType.Method, item.Type);
             Assert.Equal("<p>Not decoded for summary: `&lt;`, `&gt;` </p>", item.Summary);
             Assert.Equal("Decoded in remarks: `<`, `>`\n```Java\n//Decoded in code snippet of remarks: `<`, `>`\n```", item.Remarks.Replace("\r\n", "\n"));
+
+            var renamedPath = Path.Combine(outputFolder, "com.mycompany.app.App.testIfCode2YamlIsCorrectlyConvertFileNameAndIdToRegularizedCompoundNameForLongFileNamesThatWillBeConvertedToHashByDoxygen.yml");
+            Assert.True(File.Exists(renamedPath));
+            model = YamlUtility.Deserialize<PageModel>(renamedPath);
+            item = model.Items.Find(i => i.Uid == "com.mycompany.app.App.testIfCode2YamlIsCorrectlyConvertFileNameAndIdToRegularizedCompoundNameForLongFileNamesThatWillBeConvertedToHashByDoxygen");
+            Assert.NotNull(item);
         }
 
         public void Dispose()
