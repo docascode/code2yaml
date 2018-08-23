@@ -140,18 +140,12 @@
                                   where g.Count() > 1 && duplicate != null
                                   select (string)duplicate.Attribute("refid")).ToList();
 
-            ConsoleLogger.WriteLine(new LogEntry { Phase = StepName, Level = LogLevel.Info, Message = $"DuplicatedItems: {string.Join(",", duplicateItems)}" });
-            ConsoleLogger.WriteLine(new LogEntry { Phase = StepName, Level = LogLevel.Info, Message = $"Compound has items: {compounddefIdMapping.Keys.Count}" });
             //Get duplicate Ids when ignore case
             var results = duplicateItems.Where(id => compounddefIdMapping.ContainsKey(id)).Select(k => compounddefIdMapping.TryRemove(k, out _)).ToList();
-
-            ConsoleLogger.WriteLine(new LogEntry { Phase = StepName, Level = LogLevel.Info, Message = $"Compound has items: {compounddefIdMapping.Keys.Count}" });
             var duplicatedIds = compounddefIdMapping.GroupBy(k => k.Value.ToLower())
                              .Where(g => g.Count() > 1)
                              .Select(kg => kg.Select(kv => kv.Key))
                              .SelectMany(ke => ke);
-            ConsoleLogger.WriteLine(new LogEntry { Phase = StepName, Level = LogLevel.Info, Message = $"Compound has items: {compounddefIdMapping.Keys.Count}" });
-            ConsoleLogger.WriteLine(new LogEntry { Phase = StepName, Level = LogLevel.Info, Message = $"DuplicatedIds: {string.Join(",", duplicatedIds)}" });
 
             var extendedIdMaping = new ConcurrentDictionary<string, string>();
             await Directory.EnumerateFiles(inputPath, "*.xml").ForEachInParallelAsync(
@@ -254,7 +248,6 @@
                 return Task.FromResult(1);
             });
             context.SetSharedObject(Constants.ExtendedIdMappings, extendedIdMaping);
-            ConsoleLogger.WriteLine(new LogEntry { Phase = StepName, Level = LogLevel.Info, Message = $"ExtendedPath: {string.Join(",", extendedIdMaping.Keys.ToList())}" });
         }
 
         private static string RegularizeUid(string uid, IDictionary<string, string> memberMapping)
