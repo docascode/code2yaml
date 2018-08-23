@@ -16,6 +16,8 @@
         public const string IntermediateFolderName = ".inter";
         public const string XmlFolderName = "xml";
         public const string ProcessedXmlFolderName = "xml_update";
+        public const string RenamedFormat = "{0}({1})";
+        public const string ExtendedIdMappings = "extended_id_mappings";
         public const string Changes = "changes";
         public const string CurrentChange = "cur_change";
         public const string ParentChange = "parent_change";

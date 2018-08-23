@@ -35,6 +35,7 @@
             @"The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
             @"THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
         };
+        private static IReadOnlyList<string> KindToDeletedCollection = new List<string> { "file", "dir" };
 
         public string StepName { get { return "Preprocess"; } }
 
@@ -66,16 +67,31 @@
                     doc.Save(p);
                 });
 
-            // get friendly uid for members
-            var memberUidMapping = new ConcurrentDictionary<string, string>();
+            // get friendly uid
+            var uidMapping = new ConcurrentDictionary<string, string>();
+            var compounddefIdMapping = new ConcurrentDictionary<string, string>();
             await Directory.EnumerateFiles(inputPath, "*.xml").ForEachInParallelAsync(
                 p =>
                 {
                     XDocument doc = XDocument.Load(p);
+                    var def = doc.Root.Element("compounddef");
+                    var formatedCompoundDefId = string.Empty;
+                    if (def != null)
+                    {
+                        if(KindToDeletedCollection.Contains(def.Attribute("kind").Value))
+                        {
+                            File.Delete(p);
+                            return Task.FromResult(1);
+                        }
+                        var id = def.Attribute("id").Value;
+                        formatedCompoundDefId = def.Element("compoundname").Value.Replace(Constants.NameSpliter, Constants.IdSpliter);
+                        uidMapping[id] = formatedCompoundDefId;
+                        compounddefIdMapping[id] = formatedCompoundDefId;
+                    }
                     foreach (var node in doc.XPathSelectElements("//memberdef[@id]"))
                     {
                         var id = node.Attribute("id").Value;
-                        memberUidMapping[id] = PreprocessMemberUid(node);
+                        uidMapping[id] = PreprocessMemberUid(node, formatedCompoundDefId);
                     }
                     return Task.FromResult(1);
                 });
@@ -91,6 +107,20 @@
                                   where g.Count() > 1 && duplicate != null
                                   select (string)duplicate.Attribute("refid")).ToList();
 
+            ConsoleLogger.WriteLine(new LogEntry { Phase = StepName, Level = LogLevel.Info, Message = $"DuplicatedItems: {string.Join(",", duplicateItems)}" });
+            ConsoleLogger.WriteLine(new LogEntry { Phase = StepName, Level = LogLevel.Info, Message = $"Compound has items: {compounddefIdMapping.Keys.Count}" });
+            //Get duplicate Ids when ignore case
+            var results = duplicateItems.Where(id => compounddefIdMapping.ContainsKey(id)).Select(k => compounddefIdMapping.TryRemove(k, out _)).ToList();
+
+            ConsoleLogger.WriteLine(new LogEntry { Phase = StepName, Level = LogLevel.Info, Message = $"Compound has items: {compounddefIdMapping.Keys.Count}" });
+            var duplicatedIds = compounddefIdMapping.GroupBy(k => k.Value.ToLower())
+                             .Where(g => g.Count() > 1)
+                             .Select(kg => kg.Select(kv => kv.Key))
+                             .SelectMany(ke => ke);
+            ConsoleLogger.WriteLine(new LogEntry { Phase = StepName, Level = LogLevel.Info, Message = $"Compound has items: {compounddefIdMapping.Keys.Count}" });
+            ConsoleLogger.WriteLine(new LogEntry { Phase = StepName, Level = LogLevel.Info, Message = $"DuplicatedIds: {string.Join(",", duplicatedIds)}" });
+
+            var extendedIdMaping = new ConcurrentDictionary<string, string>();
             await Directory.EnumerateFiles(inputPath, "*.xml").ForEachInParallelAsync(
             p =>
             {
@@ -157,11 +187,11 @@
                 }
                 foreach (var node in doc.XPathSelectElements("//node()[@refid]"))
                 {
-                    node.Attribute("refid").Value = RegularizeUid(node.Attribute("refid").Value, memberUidMapping);
+                    node.Attribute("refid").Value = RegularizeUid(node.Attribute("refid").Value, uidMapping);
                 }
                 foreach (var node in doc.XPathSelectElements("//node()[@id]"))
                 {
-                    node.Attribute("id").Value = RegularizeUid(node.Attribute("id").Value, memberUidMapping);
+                    node.Attribute("id").Value = RegularizeUid(node.Attribute("id").Value, uidMapping);
                 }
 
                 // remove copyright comment
@@ -172,9 +202,26 @@
                         node.Remove();
                     }
                 }
-                doc.Save(Path.Combine(dirInfo.FullName, RegularizeUid(Path.GetFileNameWithoutExtension(p)) + Path.GetExtension(p)));
+
+                string fileName = Path.GetFileNameWithoutExtension(p);
+                if (compounddefIdMapping.TryGetValue(fileName, out string formatedFileName))
+                {
+                    formatedFileName = RegularizeUid(formatedFileName);
+                    if(duplicatedIds.Contains(fileName))
+                    {
+                        fileName = string.Format(Constants.RenamedFormat, formatedFileName, TryGetType(fileName));
+                        extendedIdMaping[formatedFileName] = fileName;
+                    }
+                    else
+                    {
+                        fileName = formatedFileName;
+                    }                                                         
+                }
+                doc.Save(Path.Combine(dirInfo.FullName, fileName + Path.GetExtension(p)));
                 return Task.FromResult(1);
             });
+            context.SetSharedObject(Constants.ExtendedIdMappings, extendedIdMaping);
+            ConsoleLogger.WriteLine(new LogEntry { Phase = StepName, Level = LogLevel.Info, Message = $"ExtendedPath: {string.Join(",", extendedIdMaping.Keys.ToList())}" });
         }
 
         private static string RegularizeUid(string uid, IDictionary<string, string> memberMapping)
@@ -218,11 +265,28 @@
             return false;
         }
 
-        private static string PreprocessMemberUid(XElement memberDef)
+        private static string TryGetType(string uid)
+        {
+            var m = IdRegex.Match(uid);
+            if (m.Success)
+            {
+                return m.Groups[1].Value;
+            }
+            return string.Empty;
+        }
+
+        private static string PreprocessMemberUid(XElement memberDef, string formatedParentId)
         {
             StringBuilder builder = new StringBuilder();
-            string parentId = memberDef.Ancestors("compounddef").Single().Attribute("id").Value;
-            builder.Append(parentId);
+            if (string.IsNullOrEmpty(formatedParentId))
+            {
+                string parentId = memberDef.Ancestors("compounddef").Single().Attribute("id").Value;
+                builder.Append(parentId);
+            }
+            else
+            {
+                builder.Append(formatedParentId);
+            }
             builder.Append(Constants.IdSpliter);
             builder.Append(memberDef.Element("name").Value);
             if (memberDef.Attribute("kind")?.Value == "function")
