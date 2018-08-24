@@ -107,12 +107,12 @@
                                   where g.Count() > 1 && duplicate != null
                                   select (string)duplicate.Attribute("refid")).ToList();
 
-            //Get duplicate Ids when ignore case
+            // Get duplicate Ids when ignore case
             var results = duplicateItems.Where(id => compounddefIdMapping.ContainsKey(id)).Select(k => compounddefIdMapping.TryRemove(k, out _)).ToList();
             var duplicatedIds = compounddefIdMapping.GroupBy(k => k.Value.ToLower())
                              .Where(g => g.Count() > 1)
                              .Select(kg => kg.Select(kv => kv.Key))
-                             .SelectMany(ke => ke);
+                             .SelectMany(ke => ke).ToList();
 
             var extendedIdMaping = new ConcurrentDictionary<string, string>();
             await Directory.EnumerateFiles(inputPath, "*.xml").ForEachInParallelAsync(
@@ -201,7 +201,7 @@
                 if (compounddefIdMapping.TryGetValue(fileName, out string formatedFileName))
                 {
                     formatedFileName = RegularizeUid(formatedFileName);
-                    if(duplicatedIds.Contains(fileName))
+                    if (duplicatedIds.Contains(fileName))
                     {
                         fileName = string.Format(Constants.RenamedFormat, formatedFileName, TryGetType(fileName));
                         extendedIdMaping[formatedFileName] = fileName;
