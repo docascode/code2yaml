@@ -1,6 +1,7 @@
 ﻿namespace Microsoft.Content.Build.Code2Yaml.Steps
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -29,6 +30,7 @@
                 throw new ApplicationException(string.Format("Key: {0} doesn't exist in build context", Constants.Config));
             }
 
+            var extendedIdMappings = context.GetSharedObject(Constants.ExtendedIdMappings) as ConcurrentDictionary<string, string>;
             string inputPath = StepUtility.GetProcessedXmlOutputPath(config.OutputPath);
 
             // Parse Index file
@@ -44,7 +46,7 @@
                                {
                                    Uid = uid,
                                    Name = (string)ele.Element("name"),
-                                   File = uid + Constants.XmlExtension,
+                                   File = extendedIdMappings.ContainsKey(uid) ? extendedIdMappings[uid] + Constants.XmlExtension : uid + Constants.XmlExtension,
                                    Type = type.Value,
                                }).ToDictionary(c => c.Uid);
             }

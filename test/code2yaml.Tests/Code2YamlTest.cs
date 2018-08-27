@@ -59,7 +59,7 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             procedure.RunAsync(context).Wait();
 
             // assert
-            var outputPath = Path.Combine(outputFolder, "com.mycompany.app.App.yml");
+            var outputPath = Path.Combine(outputFolder, "com.mycompany.app.App(class).yml");
             Assert.True(File.Exists(outputPath));
             var model = YamlUtility.Deserialize<PageModel>(outputPath);
             Assert.Equal(9, model.Items.Count);
@@ -67,6 +67,8 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             var item = model.Items.Find(i => i.Name == "App<T>");
             Assert.NotNull(item);
             Assert.Equal(MemberType.Class, item.Type);
+            Assert.Equal("com.mycompany.app.App", item.Uid);
+            Assert.Equal("com.mycompany.app.App(class).yml", item.Href);
             Assert.Equal("com.mycompany.app.App<T>", item.FullName);
             Assert.Equal("T", item.Syntax.TypeParameters[0].Name);
             Assert.Equal("<p>App's summary </p>", item.Summary.Replace("\r\n", "\n"));
@@ -123,11 +125,14 @@ public void checkIndentation() {
             Assert.Equal("<p>Not decoded for summary: `&lt;`, `&gt;` </p>", item.Summary);
             Assert.Equal("Decoded in remarks: `<`, `>`\n```Java\n//Decoded in code snippet of remarks: `<`, `>`\n```", item.Remarks.Replace("\r\n", "\n"));
 
-            var renamedPath = Path.Combine(outputFolder, "com.mycompany.app.App.testIfCode2YamlIsCorrectlyConvertFileNameAndIdToRegularizedCompoundNameForLongFileNamesThatWillBeConvertedToHashByDoxygen.yml");
-            Assert.True(File.Exists(renamedPath));
-            model = YamlUtility.Deserialize<PageModel>(renamedPath);
+            var checkNameUidFormatPath = Path.Combine(outputFolder, "com.mycompany.app.App.testIfCode2YamlIsCorrectlyConvertFileNameAndIdToRegularizedCompoundNameForLongFileNamesThatWillBeConvertedToHashByDoxygen.yml");
+            Assert.True(File.Exists(checkNameUidFormatPath));
+            model = YamlUtility.Deserialize<PageModel>(checkNameUidFormatPath);
             item = model.Items.Find(i => i.Uid == "com.mycompany.app.App.testIfCode2YamlIsCorrectlyConvertFileNameAndIdToRegularizedCompoundNameForLongFileNamesThatWillBeConvertedToHashByDoxygen");
             Assert.NotNull(item);
+
+            var checkExtendedTypePath = Path.Combine(outputFolder, "com.mycompany.app.app(namespace).yml");
+            Assert.True(File.Exists(checkExtendedTypePath));
         }
 
         public void Dispose()
