@@ -16,7 +16,7 @@
         public string OutputPath { get; set; }
 
         [JsonProperty(Constants.Language)]
-        public string Language { get; set; } = "cplusplus";
+        public string Language { get; set; } = "java";
 
         [JsonProperty(Constants.GenerateTocMDFile)]
         public bool GenerateTocMDFile { get; set; } = false;
