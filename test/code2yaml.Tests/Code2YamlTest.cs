@@ -62,7 +62,7 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             var outputPath = Path.Combine(outputFolder, "com.mycompany.app.App(class).yml");
             Assert.True(File.Exists(outputPath));
             var model = YamlUtility.Deserialize<PageModel>(outputPath);
-            Assert.Equal(9, model.Items.Count);
+            Assert.Equal(10, model.Items.Count);
 
             var item = model.Items.Find(i => i.Name == "App<T>");
             Assert.NotNull(item);
@@ -84,6 +84,10 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             Assert.Equal(MemberType.Method, item.Type);
             Assert.Equal("<p>Test a list:<ul><li><p>first item</p></li><li><p>second item </p></li></ul></p>", item.Summary.Replace("\r\n", "\n"));
 
+            item = model.Items.Find(i => i.Name == "testCommentsWithHtmlTag()");
+            Assert.NotNull(item);
+            Assert.Equal("<p>Write the list with HTML tag in Summary:</p>\n<p>\n  <ul>\n    <li>\n      <p>first item </p>\n    </li>\n    <li>\n      <p>second item </p>\n    </li>\n  </ul>\n</p>", item.Summary.Replace("\r\n", "\n"));
+
             item = model.Items.Find(i => i.Name == "testCommentsWithApiNote()");
             Assert.NotNull(item);
             Assert.Equal(MemberType.Method, item.Type);
@@ -95,7 +99,7 @@ item.Remarks.Replace("\r\n", "\n"));
             item = model.Items.Find(i => i.Name == "testCommentsWithBr()");
             Assert.NotNull(item);
             Assert.Equal(MemberType.Method, item.Type);
-            Assert.Equal("<p>This is first line. <br />\n\n This is second line. </p>", item.Summary.Replace("\r\n", "\n"));
+            Assert.Equal("<p>This is first line. <br />\n This is second line. </p>", item.Summary.Replace("\r\n", "\n"));
 
             item = model.Items.Find(i => i.Name == "testCommentsWithExternalLink()");
             Assert.NotNull(item);
