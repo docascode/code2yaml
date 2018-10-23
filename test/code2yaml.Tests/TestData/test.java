@@ -23,6 +23,16 @@ public class App<T> {
     }
 
     /**
+     * <p>Write the list with HTML tag in Summary:</p>
+     * <ul>
+     *     <li>first item</li>
+     *     <li>second item</li>
+     * </ul>
+     */
+    public void testCommentsWithHtmlTag() {
+    }
+
+    /**
      * The **apiNote** section should be extracted into **remarks** property
      * @apiNote
      * ## examples\n
