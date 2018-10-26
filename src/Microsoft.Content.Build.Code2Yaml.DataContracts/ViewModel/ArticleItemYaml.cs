@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-
+    using YamlDotNet.Core;
     using YamlDotNet.Serialization;
 
     [Serializable]
@@ -68,7 +68,7 @@
         [YamlMember(Alias = "package")]
         public string PackageName { get; set; }
 
-        [YamlMember(Alias = "summary")]
+        [YamlMember(Alias = "summary", ScalarStyle = ScalarStyle.DoubleQuoted)]
         public string Summary { get; set; }
 
         [YamlMember(Alias = "remarks")]
