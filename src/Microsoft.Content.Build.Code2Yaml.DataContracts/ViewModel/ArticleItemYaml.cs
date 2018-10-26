@@ -68,7 +68,7 @@
         [YamlMember(Alias = "package")]
         public string PackageName { get; set; }
 
-        [YamlMember(Alias = "summary", ScalarStyle = ScalarStyle.Literal)]
+        [YamlMember(Alias = "summary", ScalarStyle = ScalarStyle.DoubleQuoted)]
         public string Summary { get; set; }
 
         [YamlMember(Alias = "remarks")]
