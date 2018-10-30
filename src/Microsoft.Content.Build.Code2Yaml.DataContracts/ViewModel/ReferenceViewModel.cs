@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using YamlDotNet.Core;
     using YamlDotNet.Serialization;
 
     [Serializable]
@@ -40,7 +41,7 @@
         [YamlMember(Alias = "spec.java")]
         public List<SpecViewModel> SpecForJava { get; set; }
 
-        [YamlMember(Alias = "summary")]
+        [YamlMember(Alias = "summary", ScalarStyle = ScalarStyle.DoubleQuoted)]
         public string Summary { get; set; }
 
         [YamlMember(Alias = "syntax")]

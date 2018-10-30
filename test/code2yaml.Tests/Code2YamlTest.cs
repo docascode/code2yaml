@@ -71,7 +71,7 @@ namespace Microsoft.Content.Build.Code2Yaml.Tests
             Assert.Equal("com.mycompany.app.App(class).yml", item.Href);
             Assert.Equal("com.mycompany.app.App<T>", item.FullName);
             Assert.Equal("T", item.Syntax.TypeParameters[0].Name);
-            Assert.Equal("<p>App's summary </p>", item.Summary.Replace("\r\n", "\n"));
+            Assert.Equal("<p>App's summary</p>\r\n<p>\r\n  <ul>\r\n    <li>\r\n      <p>Test ScalarStyle for Summary of reference view model. </p>\r\n    </li>\r\n  </ul>\r\n</p>".Replace("\r\n", "\n"), item.Summary.Replace("\r\n", "\n"));
 
             item = model.Items.Find(i => i.Name == "main(String[] args)");
             Assert.NotNull(item);
@@ -137,6 +137,13 @@ public void checkIndentation() {
 
             var checkExtendedTypePath = Path.Combine(outputFolder, "com.mycompany.app.app(namespace).yml");
             Assert.True(File.Exists(checkExtendedTypePath));
+
+            var checkReferenceViewModelPath = Path.Combine(outputFolder, "com.mycompany.app.yml");
+            Assert.True(File.Exists(checkReferenceViewModelPath));
+            model = YamlUtility.Deserialize<PageModel>(checkReferenceViewModelPath);
+            var referenceItem = model.References.Find(i => i.Uid == "com.mycompany.app.App");
+            Assert.NotNull(referenceItem);
+            Assert.Equal("<p>App's summary</p>\r\n<p>\r\n  <ul>\r\n    <li>\r\n      <p>Test ScalarStyle for Summary of reference view model. </p>\r\n    </li>\r\n  </ul>\r\n</p>".Replace("\r\n", "\n"), referenceItem.Summary.Replace("\r\n", "\n"));
         }
 
         public void Dispose()
