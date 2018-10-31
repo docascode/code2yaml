@@ -7,13 +7,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Microsoft.Content.Build.Code2Yaml.Steps</RootNamespace>
     <AssemblyName>Microsoft.Content.Build.Code2Yaml.Steps</AssemblyName>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.DocAsCode.YamlSerialization" Version="2.13.0.0" />
-    <Reference Include="YamlDotNet" Version="4.1.0.0" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.ArticleGenerator\Microsoft.Content.Build.Code2Yaml.ArticleGenerator.csproj" />
     <ProjectReference Include="..\Microsoft.Content.Build.Code2Yaml.Common\Microsoft.Content.Build.Code2Yaml.Common.csproj" />
@@ -33,5 +29,8 @@
     <None Include="tools\libclang.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DocAsCode.YamlSerialization" Version="2.40.1" />
   </ItemGroup>
 </Project>

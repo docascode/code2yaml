@@ -9,7 +9,7 @@
     <!-- Note: unless explicitly specified, we will generate DLL -->
     <OutputType Condition=" '$(OutputType)' == '' ">Library</OutputType>
     <Prefer32Bit>false</Prefer32Bit>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <RestorePackages Condition=" '$(RestorePackages)' == '' ">true</RestorePackages>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
