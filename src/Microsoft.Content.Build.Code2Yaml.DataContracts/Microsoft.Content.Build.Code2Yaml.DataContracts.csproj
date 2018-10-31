@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Microsoft.Content.Build.Code2Yaml.DataContracts</RootNamespace>
     <AssemblyName>Microsoft.Content.Build.Code2Yaml.DataContracts</AssemblyName>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <ItemGroup>
