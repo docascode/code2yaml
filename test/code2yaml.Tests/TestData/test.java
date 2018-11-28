@@ -2,6 +2,10 @@
 
 /**
  * App's summary
+ *
+ * <ul>
+ *     <li>Test ScalarStyle for Summary of reference view model.</li>
+ * </ul>
  */
 public class App<T> {
     /**
