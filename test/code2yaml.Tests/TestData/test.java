@@ -102,6 +102,6 @@ public class App<T> {
      * An Inner class to test file name format and refid/id format.
      * The fileName/refid/id should not contain `_` or hash or other that not exist in its origin name
      */
-    public class testIfCode2YamlIsCorrectlyConvertFileNameAndIdToRegularizedCompoundNameForLongFileNamesThatWillBeConvertedToHashByDoxygen { 
+    public static class testIfCode2YamlIsCorrectlyConvertFileNameAndIdToRegularizedCompoundNameForLongFileNamesThatWillBeConvertedToHashByDoxygen extends NativeBase { 
     }
 }

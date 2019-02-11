@@ -134,6 +134,8 @@ public void checkIndentation() {
             model = YamlUtility.Deserialize<PageModel>(checkNameUidFormatPath);
             item = model.Items.Find(i => i.Uid == "com.mycompany.app.App.testIfCode2YamlIsCorrectlyConvertFileNameAndIdToRegularizedCompoundNameForLongFileNamesThatWillBeConvertedToHashByDoxygen");
             Assert.NotNull(item);
+            Assert.True(item.Inheritance?.Count == 2);
+            Assert.Equal("NativeBase", item.Inheritance[1]);
 
             var checkExtendedTypePath = Path.Combine(outputFolder, "com.mycompany.app.app(namespace).yml");
             Assert.True(File.Exists(checkExtendedTypePath));
