@@ -377,7 +377,7 @@
 
             //yaml.Inheritance = idHash.ToDictionary(pair => nodeIdHash[pair.Key], pair => pair.Value.Select(n => nodeIdHash[n]).ToList());
             // var dict = idHash.ToDictionary(pair => nodeIdHash[pair.Key], pair => pair.Value.Select(n => nodeIdHash[n]).ToList());
-            var dict = idHash.GroupBy(pair => nodeIdHash[pair.Key]).ToDictionary(g => g.Key, g => g.SelectMany(p => p.Value).Select(n => nodeIdHash[n]).ToList());
+            var dict = idHash.GroupBy(pair => Regex.Replace(nodeIdHash[pair.Key], "<.*?>", string.Empty)).ToDictionary(g => g.Key, g => g.SelectMany(p => p.Value).Select(n => nodeIdHash[n]).ToList());
             yaml.Inheritance = new List<string>();
             string start = yaml.Uid;
             while (dict.ContainsKey(start))
