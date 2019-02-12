@@ -35,7 +35,7 @@ GOTO :Exit
 SET DoxygenLocation=%~dp0src\Microsoft.Content.Build.Code2Yaml.Steps\tools
 IF NOT EXIST "%DoxygenLocation%\doxygen.exe" (
 IF NOT EXIST "%DoxygenLocation%\temp" MD "%DoxygenLocation%\temp"
-powershell -NoProfile -ExecutionPolicy UnRestricted -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest 'http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.12.windows.x64.bin.zip' -OutFile '%DoxygenLocation%\temp\doxygen.zip'"
+powershell -NoProfile -ExecutionPolicy UnRestricted -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest 'https://cfhcable.dl.sourceforge.net/project/doxygen/rel-1.8.12/doxygen-1.8.12.windows.x64.bin.zip' -OutFile '%DoxygenLocation%\temp\doxygen.zip'"
 powershell -NoProfile -Command "Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('%DoxygenLocation%\temp\doxygen.zip', '%DoxygenLocation%\temp'); Move-Item '%DoxygenLocation%\temp\doxygen.exe' '%DoxygenLocation%' -force; Move-Item '%DoxygenLocation%\temp\*.dll' '%DoxygenLocation%' -force; Remove-Item '%DoxygenLocation%\temp' -Recurse -force;"
 )
 
