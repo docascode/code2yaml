@@ -3,7 +3,8 @@
     using System.Collections.Generic;
     using System.Text;
     using System.Xml.Linq;
-
+    using GitSharp;
+    using Microsoft.Content.Build.Code2Yaml.Common;
     using Microsoft.Content.Build.Code2Yaml.DataContracts;
     using Microsoft.Content.Build.Code2Yaml.DeclarationGenerator;
     using Microsoft.Content.Build.Code2Yaml.NameGenerator;
