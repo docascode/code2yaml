@@ -58,9 +58,10 @@
 
         private static bool ValidateConfig(string[] args)
         {
-            if (args.Length > 1)
+            if (args.Length > 2)
             {
                 Console.Error.WriteLine("Unrecognized parameters. Usage : Code2Yaml.exe [code2yaml.json]");
+                Console.Error.WriteLine("Or : Code2Yaml.exe [code2yaml.json] [TimeoutInMilliseconds]");
                 return false;
             }
             string configPath = args.Length == 0 ? Constants.Constants.ConfigFileName : args[0];
@@ -72,6 +73,12 @@
             try
             {
                 _config = LoadConfig(Path.GetFullPath(configPath));
+
+                if(args.Length == 2)
+                {
+                    Int32.TryParse(args[1], out int timeout);
+                    _config.DoxygenTimeout = timeout;
+                }
             }
             catch (Exception ex)
             {

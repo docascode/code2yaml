@@ -18,7 +18,6 @@
     {
         private static readonly string DoxygenLocation = "tools/doxygen.exe";
         private static readonly string DoxyFileTemplate = $"{typeof(RunDoxygen).Assembly.GetName().Name}.template.DoxyfileTemplate";
-        private const int TimeoutInMilliseconds = 300000; // 5 minutes
 
         public string StepName
         {
@@ -32,7 +31,10 @@
         {
             return Task.Run(() =>
             {
-                string doxyFile = GenerateDoxyfile(context);
+                ConfigModel config = context.GetSharedObject(Constants.Config) as ConfigModel;
+                int timeoutInMilliseconds = config.DoxygenTimeout;
+                string doxyFile = GenerateDoxyfile(config);
+
                 using (var doxygenProcess = new Process())
                 {
                     doxygenProcess.StartInfo.FileName = DoxygenLocation;
@@ -57,7 +59,7 @@
                         };
                         doxygenProcess.Start();
                         doxygenProcess.BeginErrorReadLine();
-                        if (doxygenProcess.WaitForExit(TimeoutInMilliseconds) && errorWaitHandle.WaitOne(TimeoutInMilliseconds))
+                        if (doxygenProcess.WaitForExit(timeoutInMilliseconds) && errorWaitHandle.WaitOne(timeoutInMilliseconds))
                         {
                             if (doxygenProcess.ExitCode != 0)
                             {
@@ -80,7 +82,7 @@
                                 {
                                     Phase = StepName,
                                     Level = LogLevel.Error,
-                                    Message = $"Run Doxygen timeout in {TimeoutInMilliseconds} milliseconds.",
+                                    Message = $"Run Doxygen timeout in {timeoutInMilliseconds} milliseconds.",
                                     Data = $"DoxyFile: {File.ReadAllText(doxyFile)}",
                                 });
                             throw new TimeoutException("RunDoxygen timed out");
@@ -94,9 +96,8 @@
         /// generate Doxyfile and write to file
         /// </summary>
         /// <returns>doxyfile path</returns>
-        private string GenerateDoxyfile(BuildContext context)
+        private string GenerateDoxyfile(ConfigModel config)
         {
-            ConfigModel config = context.GetSharedObject(Constants.Config) as ConfigModel;
             string intermediateFolder = StepUtility.GetIntermediateOutputPath(config.OutputPath);
             if (Directory.Exists(intermediateFolder))
             {

@@ -26,5 +26,7 @@
 
         [JsonProperty(Constants.ServiceMapping)]
         public ServiceMappingConfig ServiceMappingConfig { get; set; }
+
+        public int DoxygenTimeout { get; set; }  = 300000; // InMilliseconds 5 minutes
     }
 }
