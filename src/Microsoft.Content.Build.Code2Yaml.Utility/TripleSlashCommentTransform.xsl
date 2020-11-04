@@ -140,7 +140,9 @@
       <xsl:attribute name="data-throw-if-not-resolved">
         <xsl:text>false</xsl:text>
       </xsl:attribute>
-      <xsl:value-of select="current()"/>
+      <xsl:attribute name="data-raw-source">
+        <xsl:value-of select="current()"/>
+      </xsl:attribute>
     </xref>
   </xsl:template>
 
