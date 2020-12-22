@@ -30,3 +30,5 @@ Shared/version
 *.pdb
 *.sln.docstates
 **/Redis/dump.rdb
+
+test/code2yaml.Tests/TestData/out/

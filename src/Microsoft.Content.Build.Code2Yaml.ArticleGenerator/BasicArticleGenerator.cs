@@ -78,7 +78,11 @@
             {
                 string kind = section.NullableAttribute("kind").NullableValue();
                 var tuple = KindMapToType(kind);
-                if (tuple.Item1.HasValue && ((tuple.Item2 & AccessLevel.NotAccessible) == AccessLevel.None))
+                ConfigModel config = (ConfigModel) context.GetSharedObject(Constants.Config);
+                bool generate = config.GenerateDocForPrivateParts ||
+                         ((tuple.Item2 & AccessLevel.NotAccessible) == AccessLevel.None);
+
+                if (tuple.Item1.HasValue && generate)
                 {
                     foreach (var member in section.Elements("memberdef"))
                     {

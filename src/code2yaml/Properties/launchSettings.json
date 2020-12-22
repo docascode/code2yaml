@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "code2yaml": {
+      "commandName": "Project",
+      "workingDirectory": "P:\\csharp\\code2yaml\\test\\code2yaml.Tests\\TestData"
+    }
+  }
+}

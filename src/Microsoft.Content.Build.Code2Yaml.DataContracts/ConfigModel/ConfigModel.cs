@@ -21,6 +21,9 @@
         [JsonProperty(Constants.GenerateTocMDFile)]
         public bool GenerateTocMDFile { get; set; } = false;
 
+        [JsonProperty(Constants.GeneratePrivate)]
+        public bool GenerateDocForPrivateParts { get; set; } = false;
+
         [JsonProperty(Constants.ExcludePaths)]
         public List<string> ExcludePaths { get; set; }
 

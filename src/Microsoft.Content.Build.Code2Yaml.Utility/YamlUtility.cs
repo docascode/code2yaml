@@ -47,7 +47,19 @@
                     {
                         return fullName;
                     }
-                    return fullName.Substring(wrapperName.Length + spliter.Length);
+
+                    string res = "";
+                    if (fullName.Contains(spliter))
+                    {
+                        res = fullName.Substring(wrapperName.Length + spliter.Length);
+                    }
+                    else if(fullName.Contains(Constants.Dot))
+                    {
+                        spliter = Constants.Dot;
+                        res = fullName.Substring(wrapperName.Length + spliter.Length);
+                    }
+
+                    return res;
             }
         }
 
