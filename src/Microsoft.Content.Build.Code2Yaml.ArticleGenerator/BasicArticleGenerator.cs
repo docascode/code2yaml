@@ -188,7 +188,8 @@
 
         protected void FillSummary(ArticleItemYaml yaml, XElement node)
         {
-            yaml.Summary = node.NullableElement("briefdescription").NullableInnerXml() + ParseSummaryFromDetailedDescription(node.NullableElement("detaileddescription"));
+            yaml.Summary = node.NullableElement("briefdescription").NullableInnerXml() + ParseSummaryFromDetailedDescription(node.NullableElement("detaileddescription"))
+                + EnumValueAsSummary(node);
             if (yaml.Summary == string.Empty)
             {
                 yaml.Summary = null;
@@ -449,6 +450,23 @@
             return returnValue.NullableInnerXml();
         }
 
+        // Only for c++ language. 
+        private string EnumValueAsSummary(XElement enumMember)
+        {
+            string language = (string) enumMember.Parent?.Parent?.Attribute("language");
+            if ( (string.Equals(language, "c++", StringComparison.OrdinalIgnoreCase) && string.Equals(language, "cplusplus", StringComparison.OrdinalIgnoreCase)) || (string)enumMember.Attribute("kind") != "enum")
+            {
+                return null;
+            }
+            string rowValues = "";
+
+            foreach (var node in enumMember.Elements("enumvalue"))
+            {
+                rowValues += "<tr><td>" + node.Element("name").NullableInnerXml() + "</td><td>" + node.Element("briefdescription").NullableInnerXml() + node.Element("detaileddescription").NullableInnerXml() + "</td></tr>";
+            }
+            return  $"<table><tr><th>Name</th><th>Description</th></tr>{rowValues}</table>"; ;
+        }
+
         /// <summary>
         /// <code>
         /// <detailedDescription>
@@ -507,6 +525,10 @@
             else if (kind.Contains("attrib"))
             {
                 type = MemberType.Field;
+            }
+            else if (kind.Contains("enum"))
+            {
+                type = MemberType.Enum;
             }
             //else if (kind.Contains("friend"))
             //{
