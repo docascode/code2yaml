@@ -148,6 +148,44 @@ public void checkIndentation() {
             Assert.Equal("<p>App's summary</p>\r\n<p>\r\n  <ul>\r\n    <li>\r\n      <p>Test ScalarStyle for Summary of reference view model. </p>\r\n    </li>\r\n  </ul>\r\n</p>".Replace("\r\n", "\n"), referenceItem.Summary.Replace("\r\n", "\n"));
         }
 
+        [Fact]
+        public void TestMetadataFromCPlusPlusProject()
+        {
+            // arrange
+            var outputFolder = Path.Combine(_workingFolder, "output");
+            var config = new ConfigModel
+            {
+                InputPaths = new List<string> { "TestData/cplusplus" },
+                Language = "cplusplus",
+                OutputPath = outputFolder,
+            };
+            var context = new BuildContext();
+            context.SetSharedObject(Constants.Constants.Config, config);
+            var procedure = new StepCollection(
+                new RunDoxygen(),
+                new PreprocessXml(),
+                new ScanHierarchy(),
+                new TaskParallel(
+                    new List<IStep>
+                    {
+                        new GenerateToc { NameGenerator = NameGeneratorFactory.Create(config.Language) },
+                        new GenerateArticles { Generator = ArticleGeneratorFactory.Create(config.Language) },
+                    }));
+
+            // act
+            procedure.RunAsync(context).Wait();
+
+            // assert
+            var outputPathStruct = Path.Combine(outputFolder, "Check.CheckStruct1.yml");
+            var outputPathClass = Path.Combine(outputFolder, "Check.CheckClass1.yml");
+            var outputPathamespace = Path.Combine(outputFolder, "Check.yml");
+            var outputToc = Path.Combine(outputFolder, "toc.yml");
+            Assert.True(File.Exists(outputPathStruct));
+            Assert.True(File.Exists(outputPathClass));
+            Assert.True(File.Exists(outputPathamespace));
+            Assert.True(File.Exists(outputToc));
+        }
+
         public void Dispose()
         {
             try
